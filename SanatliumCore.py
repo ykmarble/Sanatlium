@@ -2,10 +2,13 @@ import TwitLib2
 
 class TwitterAPIHandler(object):
     def __init__(self):
-        cons_key = "4co1ltUgx33uBTjhrgpUw"
-        cons_secret = "429iCfnuBckdOpmCn2IisjKy2TEDCbtMf72pm4E8AE"
-        acs_token = "201709742-SYl13dJ0Xwwc9saSS8QwEORdeR6tbHaH4cRrOyjN"
-        acs_secret = "L8r3MUXoj2XTdxz38oQyRW0PRGKba0yyaoq40OBRTY"
+        import ConfigParser
+        parser = ConfigParser.SafeConfigParser()
+        parser.read("C:\sanatliumconfig.ini")
+        cons_key = parser.get("consumer", "key")
+        cons_secret = parser.get("consumer", "secret")
+        acs_token = parser.get("token", "key")
+        acs_secret = parser.get("token", "secret")
         self.api = TwitLib2.TwitterAPICore(cons_key ,cons_secret ,acs_token ,acs_secret)
 #        def callback_userstreaming(self ,event):
 #            if isinstance(event ,Event):

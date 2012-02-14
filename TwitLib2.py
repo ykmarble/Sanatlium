@@ -1,20 +1,10 @@
-#!/usr/bin/env python
-#-*- coding:utf-8-*-
-
 import urllib
 import urllib2
-try:
-    import json
-except:
-    import simplejson as json
+import simplejson as json
 import threading
 import oauth2
 
 class TwitterAPICore(object):
-    """
-    TwitterAPIへのアクセスをサポート
-    oauth_handlerを用いてアクセスする
-    """
     base_url = "https://api.twitter.com/1/"
 
     def __init__(self ,consumer_key ,consumer_secret ,token_key=None ,token_secret=None):
@@ -184,11 +174,6 @@ class TwitterAPICore(object):
 
     
 class UserStreamCore(threading.Thread):
-    """
-    UserStreamsAPIに別スレッドで接続しイベントを監視
-    イベント受信時にコールバック関数を呼ぶ
-    またはキューにイベントを追加する
-    """
     def __init__(self ,oauth_handler ,callback = None):
         threading.Thread.__init__(self)
         self.setDaemon(True)
@@ -222,9 +207,6 @@ class UserStreamCore(threading.Thread):
 
 
 class Tweet(object):
-    """
-    取得したTweetを利用しやすくするためのクラス
-    """
     def __init__(self ,status_dict):
         self.id = status_dict["id"]
         self.user_id = status_dict["user"]["id"]
@@ -240,9 +222,6 @@ class Tweet(object):
 
 
 class User(object):
-    """
-    取得したUser情報を利用しやすくするためのクラス
-    """
     def __init__(self ,status_dict):
         self.name = status_dict["name"]
         self.profile_image_url = status_dict["profile_image_url"]
@@ -255,11 +234,7 @@ class User(object):
         self.description = status_dict["description"]
 
 
-
 class Event(object):
-    """
-    UserStreamsから流れてきたイベントを利用しやすくするためのクラス
-    """
     def __init__(self ,status_dict):
         try:
             self.event= status_dict["event"]
@@ -270,85 +245,3 @@ class Event(object):
             self.created_at = status_dict["created_at"]
         except KeyError:
             print status_dict.keys()
-
-def callback_userstreaming(self ,event):
-    if isinstance(event ,Event):
-        if event.event == "favorite":
-            print "<%s(@%s) faved %s(@%s)%s>"%(event.source.name ,event.source.screen_name
-                                               ,event.target.name ,event.target.screen_name
-                                               ,event.target_object.text)
-        elif event.event == "unfavorite":
-            print "<%s(@%s) unfaved %s(@%s)%s>"%(event.source.name ,event.source.screen_name
-                                                 ,event.target.name ,event.target.screen_name
-                                                 ,event.target_object.text)
-        elif event.event == "follow":
-            print "<%s(@%s) followed %s(@%s)>"%(event.source.name ,event.source.screen_name
-                                                ,event.target.name ,event.target.screen_name)
-        else:
-            print "<%s event received.>"
-
-    elif isinstance(event ,Tweet):
-        self.que.append(event)
-        print "%s(@%s):%s"%(event.user.name ,event.user.screen_name ,event.text)
-    else:
-        print "TypeError:%s is not supported"%type(event)
-
-def get_acs_token():
-    import webbrowser
-    cons_key = "4co1ltUgx33uBTjhrgpUw"
-    cons_secret = "429iCfnuBckdOpmCn2IisjKy2TEDCbtMf72pm4E8AE"
-    api = TwitterAPICore(cons_key ,cons_secret)
-    authorize_url = "https://api.twitter.com/oauth/authorize?"
-    request_token ,request_secret = api.get_requesttoken()
-    api.set_oauth_token(request_token ,request_secret)
-    webbrowser.open(authorize_url+"oauth_token=%s"%request_token)
-    pin = input("input PIN:")
-    acs_token ,token_secret = api.get_accesstoken(pin)
-    print "Your Accsess Token is %s"%acs_token
-    print "Access Token Secret is %s"%token_secret
-    api.set_oauth_token(acs_token ,token_secret)
-    for tweet in api.get_home_timeline():
-        print "%s(@%s)%s"%(tweet.user.name ,tweet.user.screen_name ,tweet.text)
-
-def ustest(callback):
-    cons_key = "4co1ltUgx33uBTjhrgpUw"
-    cons_secret = "429iCfnuBckdOpmCn2IisjKy2TEDCbtMf72pm4E8AE"
-    acs_token = "201709742-SYl13dJ0Xwwc9saSS8QwEORdeR6tbHaH4cRrOyjN"
-    acs_secret = "L8r3MUXoj2XTdxz38oQyRW0PRGKba0yyaoq40OBRTY"
-    url = "https://userstream.twitter.com/2/user.json"
-    body = {"delimited":"length"}
-    oauth_handler = TwitterAPICore(cons_key ,cons_secret ,acs_token ,acs_secret)
-    self.stream = oauth_handler._http_post(url ,body)
-    while 1:
-        len = ""
-        while True:
-            c = self.stream.read(1)
-            if c=="\n": break
-            len += c
-        len = len.strip()
-        if not len.isdigit(): continue
-        buf = self.stream.read(int(len)).decode("utf-8")
-        event_dict = json.loads(buf)
-        if event_dict.has_key("event"):
-            event = Event(event_dict)
-        elif event_dict.has_key("text"):
-            event = Tweet(event_dict)
-        else:continue
-        self.callback(self ,event)
-
-def main():
-    cons_key = "4co1ltUgx33uBTjhrgpUw"
-    cons_secret = "429iCfnuBckdOpmCn2IisjKy2TEDCbtMf72pm4E8AE"
-    acs_token = "201709742-SYl13dJ0Xwwc9saSS8QwEORdeR6tbHaH4cRrOyjN"
-    acs_secret = "L8r3MUXoj2XTdxz38oQyRW0PRGKba0yyaoq40OBRTY"
-    acs_token_sub = "320176676-n2nG1TEsckJjBM5xXL1fovGbDFP7W9Kl4vcgT7ZX"
-    acs_secret_sub = "Kk1BTJob2hBMa7LMcJVSUMBAyIV4HUPpi49nyFer1o"
-    api = TwitterAPICore(cons_key ,cons_secret ,acs_token ,acs_secret)
-    us = UserStreamCore(api ,callback_userstreaming)
-    us.start()
-    while 1:
-        pass
-
-if __name__ == '__main__':
-    ustest(callback_userstreaming)
-
