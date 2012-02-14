@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Sanatlium</title>
+		<link rel="stylesheet" type="text/css" href="Sanatlium.css">
+		<script type="text/javascript" src="jquery-1.4.1.min.js"></script>
+		<script type="text/python">
+			import SanatliumCore
+			api_handler = SanatliumCore.TwitterAPIHandler()
+		</script>
+		<script type="text/javascript">
+			jQuery(function(){
+				jQuery("#post_button").click(function(){
+					api_handler.update(jQuery("#post_status").val());
+					jQuery("#post_status").val("");
+					jQuery("#timeline").prepend(api_handler.get_tl());
+				});
+				jQuery("#tl_update_button").click(function(){
+					jQuery("#timeline").prepend(api_handler.get_tl());
+				});
+				jQuery("#reflesh_button").click(function(){
+					jQuery("#timeline").prepend(api_handler.check_que());
+				});
+				jQuery(".tweet").live("click" ,function(){
+					api_handler.create_favorite(jQuery(this).attr("id"));
+					jQuery(this).val(jQuery(this).val()+"★");
+					alert("ふぁぼった");
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="post_form">
+			<textarea id="post_status" rows="4"></textarea><br />
+			<button id="tl_update_button">Update</button>
+			<button id="post_button">POST</button>
+		</div>
+		<hr />
+		<div id="timeline">
+		</div>
+	</body>
+</html>

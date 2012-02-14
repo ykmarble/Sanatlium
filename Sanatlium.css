@@ -1,0 +1,7 @@
+body{font-family: "メイリオ" ;font-size: small}
+textarea#post_status{width: 100%}
+button{font-size: 100% ;padding: 5px}
+button#post_button{float: right}
+hr{clear: both}
+.tweet{width: 100%}
+.tweet img{size: 50px ;float: left}
