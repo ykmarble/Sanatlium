@@ -10,10 +10,23 @@
 		</script>
 		<script type="text/javascript">
 			jQuery(function(){
+				jQuery("#timeline").prepend(api_handler.get_tl(50));
+				setInterval(function(){
+					jQuery("#timeline").prepend(api_handler.check_que());
+				} ,500);
 				jQuery("#post_button").click(function(){
 					api_handler.update(jQuery("#post_status").val());
 					jQuery("#post_status").val("");
-					jQuery("#timeline").prepend(api_handler.get_tl());
+				});
+				jQuery("#post_form").keydown(function(e){
+					if (event.ctrlKey){
+						if(e.keyCode == 13){
+							api_handler.update(jQuery("#post_status").val());
+							jQuery("#post_status").val("");
+						}else{
+							alert(e.keyCode);
+						}
+					}
 				});
 				jQuery("#tl_update_button").click(function(){
 					jQuery("#timeline").prepend(api_handler.get_tl());
@@ -23,7 +36,6 @@
 				});
 				jQuery(".tweet").live("click" ,function(){
 					api_handler.create_favorite(jQuery(this).attr("id"));
-					jQuery(this).val(jQuery(this).val()+"★");
 					alert("ふぁぼった");
 				});
 			});

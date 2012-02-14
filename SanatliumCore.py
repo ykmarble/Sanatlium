@@ -1,4 +1,6 @@
 import TwitLib2
+import thread
+import urllib2
 
 class TwitterAPIHandler(object):
     def __init__(self):
@@ -10,43 +12,31 @@ class TwitterAPIHandler(object):
         acs_token = parser.get("token", "key")
         acs_secret = parser.get("token", "secret")
         self.api = TwitLib2.TwitterAPICore(cons_key ,cons_secret ,acs_token ,acs_secret)
-#        def callback_userstreaming(self ,event):
-#            if isinstance(event ,Event):
-#                if event.event == "favorite":
-#                    print "<%s(@%s) faved %s(@%s)%s>"%(event.source.name ,event.source.screen_name
-#                                                       ,event.target.name ,event.target.screen_name
-#                                                       ,event.target_object.text)
-#                elif event.event == "unfavorite":
-#                    print "<%s(@%s) unfaved %s(@%s)%s>"%(event.source.name ,event.source.screen_name
-#                                                         ,event.target.name ,event.target.screen_name
-#                                                         ,event.target_object.text)
-#                elif event.event == "follow":
-#                    print "<%s(@%s) followed %s(@%s)>"%(event.source.name ,event.source.screen_name
-#                                                        ,event.target.name ,event.target.screen_name)
-#                else:
-#                    print "<%s event received.>"
-#
-#            elif isinstance(event ,Tweet):
-#                self.que.append(event)
-#                print "%s(@%s):%s"%(event.user.name ,event.user.screen_name ,event.text)
-#            else:
-#                print "TypeError:%s is not supported"%type(event)
-#        self.userstreaming = TwitLib2.UserStreamCore(self.api ,callback_userstreaming)
-#        self.userstreaming.start()
+        def callback_userstreaming(self ,event):
+            if isinstance(event ,TwitLib2.Tweet):
+                self.que.append(event)
+        self.userstreaming = TwitLib2.UserStreamCore(cons_key ,cons_secret ,acs_token ,acs_secret ,callback_userstreaming)
+        self.userstreaming.start()
         
                 
-    def update(self ,status):
+    def update(self ,status ,in_reply_to_id = None):
         status = status.decode("utf-8")
-        tweet = self.api.post_tweet(status)
-        return self.make_tl_tag([tweet])
+        try:
+            thread.start_new_thread(self.api.post_tweet, (status ,in_reply_to_id))
+        except urllib2.HTTPError ,error:
+            print error.code
+            print type(error.code)
+
         
-    def get_tl(self):
-        print "called"
-        tl = self.api.get_home_timeline()
+    def get_tl(self ,count = None):
+        tl = self.api.get_home_timeline(count)
         return self.make_tl_tag(tl)
     
-    def create_favorite(self ,id):
-        self.api.create_favorite(id)
+    def create_favorite(self ,tweet_id):
+        try:
+            thread.start_new_thread(self.api.create_favorite ,(tweet_id,))
+        except:
+            print "error in create_favorite"
         
     def check_que(self):
         if self.userstreaming.que:

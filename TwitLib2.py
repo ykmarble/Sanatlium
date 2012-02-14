@@ -81,6 +81,7 @@ class TwitterAPICore(object):
            args["since_id"] = since_id
         if max_id:
            args["max_id"] = max_id
+        print args
         connect = self._http_get("%s%s"%(self.base_url ,path) ,args)
         try:
             responce = connect.read().decode("utf-8")
@@ -161,7 +162,6 @@ class TwitterAPICore(object):
                                                     ,http_method="POST" ,http_url=url
                                                     ,parameters=args ,body=body)
         req.sign_request(oauth2.SignatureMethod_HMAC_SHA1() ,self.oauth_consumer ,self.oauth_token)
-        print url ,body ,req.to_header()
         return urllib2.urlopen(urllib2.Request(url ,data=body ,headers = req.to_header()))
 
     def _http_get(self ,url ,args = {}):
@@ -174,13 +174,19 @@ class TwitterAPICore(object):
 
     
 class UserStreamCore(threading.Thread):
-    def __init__(self ,oauth_handler ,callback = None):
+    def __init__(self ,consumer_key ,consumer_secret ,token_key ,token_secret ,callback = None):
+        import tweepy
         threading.Thread.__init__(self)
         self.setDaemon(True)
         url = "https://userstream.twitter.com/2/user.json"
         body = {"delimited":"length"}
+        header = {}
+        Handler = tweepy.OAuthHandler(consumer_key ,consumer_secret)
+        Handler.set_access_token(token_key ,token_secret)
+        Handler.apply_auth(url ,"POST" ,header ,body)
+        req = urllib2.Request(url ,headers = header)
+        self.stream = urllib2.urlopen(req ,urllib.urlencode(body))
         self.que = []
-        self.stream = oauth_handler._http_post(url ,body)
         if callback:
             self.callback = callback
         else:
@@ -196,7 +202,7 @@ class UserStreamCore(threading.Thread):
                 len += c
             len = len.strip()
             if not len.isdigit(): continue
-            buf = self.stream.read(int(len)).decode("utf-8")
+            buf = self.stream.read(int(len)).decode("utf-8" ,"ignore")
             event_dict = json.loads(buf)
             if event_dict.has_key("event"):
                 event = Event(event_dict)
