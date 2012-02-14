@@ -4,6 +4,7 @@
 		<title>Sanatlium</title>
 		<link rel="stylesheet" type="text/css" href="Sanatlium.css">
 		<script type="text/javascript" src="jquery-1.4.1.min.js"></script>
+		<script type="text/javascript" src="jquery.gpkey-0.1.min.js"></script>
 		<script type="text/python">
 			import SanatliumCore
 			api_handler = SanatliumCore.TwitterAPIHandler()
@@ -18,18 +19,11 @@
 					api_handler.update(jQuery("#post_status").val());
 					jQuery("#post_status").val("");
 				});
-				jQuery("#post_form").keydown(function(e){
-					if (event.ctrlKey){
-						if(e.keyCode == 13){
-							api_handler.update(jQuery("#post_status").val());
-							jQuery("#post_status").val("");
-						}else{
-							alert(e.keyCode);
-						}
-					}
-				});
-				jQuery("#tl_update_button").click(function(){
-					jQuery("#timeline").prepend(api_handler.get_tl());
+				jQuery("#post_form").gpKey("down" ,{
+					"^enter":function(){
+						api_handler.update(jQuery("#post_status").val());
+						jQuery("#post_status").val("");
+					},
 				});
 				jQuery("#reflesh_button").click(function(){
 					jQuery("#timeline").prepend(api_handler.check_que());
@@ -44,7 +38,6 @@
 	<body>
 		<div id="post_form">
 			<textarea id="post_status" rows="4"></textarea><br />
-			<button id="tl_update_button">Update</button>
 			<button id="post_button">POST</button>
 		</div>
 		<hr />

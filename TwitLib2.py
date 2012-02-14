@@ -81,7 +81,6 @@ class TwitterAPICore(object):
            args["since_id"] = since_id
         if max_id:
            args["max_id"] = max_id
-        print args
         connect = self._http_get("%s%s"%(self.base_url ,path) ,args)
         try:
             responce = connect.read().decode("utf-8")
