@@ -1,7 +1,32 @@
-body{font-family: "メイリオ" ;font-size: small}
-textarea#post_status{width: 100%}
-button{font-size: 100% ;padding: 5px}
-button#post_button{float: right}
-hr{clear: both}
-.tweet{width: 100%}
-.tweet img{size: 50px ;float: left}
+body{
+	font-family: "メイリオ";
+	font-size: small;
+	overflow: hidden;
+	/*
+	background:url(MyImage/background.bmp);
+	background:rgba(255,255,255,0.5);
+	*/
+}
+
+textarea#post_status{width: 100%;}
+
+button{
+	font-size: 100%;
+	padding: 5px;
+}
+button#post_button{float: right;}
+
+hr{clear: both;}
+
+#timeline{
+	width: 100%;
+	overflow: scroll;
+}
+
+.tweet{	width: 100%;}
+.tweet_image{padding-bottom:5px;}
+.tweet_value{overflow: hidden;}
+.tweet img{
+	height: 50px; width: 50px;
+	float: left
+}

@@ -11,30 +11,46 @@
 		</script>
 		<script type="text/javascript">
 			jQuery(function(){
+				//load last 50 Home TimeLine
 				jQuery("#timeline").prepend(api_handler.get_tl(50));
+				
+				//set timeline div size
+				var windowheight = jQuery(window).height();
+				var postformheight = jQuery("#post_form").innerHeight();
+				jQuery("#timeline").height(windowheight-postformheight-33);
+				
+				// set UserStreamings Event Lisetener
 				setInterval(function(){
 					jQuery("#timeline").prepend(api_handler.check_que());
 				} ,500);
+				
+				//set UI Event Handler
 				jQuery("#post_button").click(function(){
 					api_handler.update(jQuery("#post_status").val());
 					jQuery("#post_status").val("");
 				});
+				jQuery(".tweet").live("click" ,function(){
+					api_handler.create_favorite(jQuery(this).attr("id"));
+					alert("ふぁぼった");
+				});
+				
+				//set Window Resize Event Handler
+				jQuery(window).resize(function(){
+					windowheight = jQuery(window).height();
+					jQuery("#timeline").height(windowheight-postformheight-33);
+				});
+				
+				//set Key Config
 				jQuery("#post_form").gpKey("down" ,{
 					"^enter":function(){
 						api_handler.update(jQuery("#post_status").val());
 						jQuery("#post_status").val("");
 					},
 				});
-				jQuery("#reflesh_button").click(function(){
-					jQuery("#timeline").prepend(api_handler.check_que());
-				});
-				jQuery(".tweet").live("click" ,function(){
-					api_handler.create_favorite(jQuery(this).attr("id"));
-					alert("ふぁぼった");
-				});
 			});
 		</script>
 	</head>
+	
 	<body>
 		<div id="post_form">
 			<textarea id="post_status" rows="4"></textarea><br />
