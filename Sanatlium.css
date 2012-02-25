@@ -2,6 +2,7 @@ body{
 	font-family: "メイリオ";
 	font-size: small;
 	overflow: hidden;
+	background:#f0ffff
 	/*
 	background:url(MyImage/background.bmp);
 	background:rgba(255,255,255,0.5);
@@ -19,7 +20,9 @@ button{
 button#in_reply_to_delete{float:right;}
 button#post_button{float: right;}
 
-hr{clear: both;}
+hr{
+	clear: both;
+}
 
 .tab ul{ 
 	
@@ -28,8 +31,7 @@ hr{clear: both;}
 	list-style-type:none;
 	text-align:center;
 	float:left;
-	width:80px;
-	height:25px;
+	border: solid 1px #C0C0C0;
 	background:-webkit-gradient(linear, left top, left bottom, from(rgba(190,190,190,0.7)), to(rgba(140,140,140,0.7)));
 }
 .selected{
@@ -38,16 +40,18 @@ hr{clear: both;}
 .tab a{
 	text-decoration:none;
 	color:#000;
-	font-size:110%;
 	display:block;
-	line-height:25px;
+	padding:1px 5px;
+	
 }
 
-#timeline,#replytab{
+.maintab{
 	width: 100%;
 	overflow: scroll;
-	background:rgba(255,255,255,0.5);
 }
+.mypost{background:rgb(184,212,255)}
+.mention{background:rgb(255,222,166)}
+.retweeted{background:rgb(183,255,168)}
 
 #replytab{
 	display:none;
@@ -62,7 +66,7 @@ hr{clear: both;}
 
 
 .tweet{	width: 100%;}
-.tweet_image{padding-bottom:5px;}
+.tweet_image{margin-bottom:5px;}
 .tweet_value{overflow: hidden;}
 .tweet img{
 	height: 50px; width: 50px;

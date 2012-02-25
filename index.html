@@ -14,13 +14,16 @@
 				//var
 				var in_reply_to = ["" ,""];//0:in_reply_to_id 1:status
 				
-				//load last 50 Home TimeLine
-				jQuery("#timeline").prepend(api_handler.get_tl(50));
+				//load last 200 Home TimeLine and reply
+				var mention_html = api_handler.get_mention(200);
+				jQuery("#timeline").prepend(mention_html);
+				jQuery("#replytab").prepend(mention_html);
+				jQuery("#timeline").prepend(api_handler.get_tl(200));
 				
 				//set timeline div size
+				var postformheight = jQuery("#post_form").innerHeight();	
 				var windowheight = jQuery(window).height();
-				var postformheight = jQuery("#post_form").innerHeight();
-				jQuery("#timeline").height(windowheight-postformheight-35);
+				jQuery(".maintab").height(windowheight-postformheight-35);
 				
 				// set UserStreamings Event Lisetener
 				setInterval(function(){
@@ -92,8 +95,16 @@
 					in_reply_to = ["" ,""];
 					jQuery("#in_reply_to_indicator").remove();
 				});
-				
-				
+				//reply bom
+				jQuery(".reply_bom").live("click",function(){
+				var getAcount = jQuery(this).parents(".tweet").find(".acountname").text();
+				for(var z = 1; z < 10;z++){
+					getAcount = getAcount+".";
+					api_handler.update(jQuery(getAcount).val());
+     				}
+     			getAcount = "";
+    			});
+							
 				//make tab script
 				jQuery(".tab li a").click(function(){
 					jQuery(".tab li a").removeClass("selected");
@@ -101,12 +112,10 @@
 					jQuery(".maintab").hide();
 					jQuery(jQuery(this).attr("href")).fadeIn(0);
 					return false;
-				});
-				
-				
+				});		
 				
 				//check if mouse cursor on timeline
-				jQuery("#timeline").mouseover(function(){
+				jQuery(".maintab").mouseover(function(){
 					jQuery(this).focus();
 				});
 				
@@ -125,20 +134,13 @@
 				//set Window Resize Event Handler
 				jQuery(window).resize(function(){
 					windowheight = jQuery(window).height();
-					jQuery("#timeline").height(windowheight-postformheight-35);
+					jQuery(".maintab").height(windowheight-postformheight-35);
 				});
 				
 				//set Key Config
 				jQuery("#post_form").gpKey("down" ,{
 					"^enter":function(){
-						if (in_reply_to[0] != ""){
-							api_handler.update(jQuery("#post_status").val() ,in_reply_to[0]);
-							jQuery("#in_reply_to_indicator").remove();
-						}else{
-							api_handler.update(jQuery("#post_status").val());
-						}
-						jQuery("#post_status").val("");
-						in_reply_to = ["" ,""];
+						jQuery("#post_button").click();
 					},
 				});
 			});
@@ -151,8 +153,8 @@
 			<b id="textcount">140</b><button id="post_button">POST</button>
 		</div>
 		<ul class="tab">
-			<li><a href="#timeline" class="selected">TL</a></li>
-			<li><a href="#replytab">Reply</a></li>
+			<li><a href="#timeline" class="selected">TimeLine</a></li>
+			<li><a href="#replytab">Mentions</a></li>
 		</ul>
 		<hr />
 		<div id="timeline" class="maintab">

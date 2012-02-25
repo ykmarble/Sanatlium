@@ -17,6 +17,7 @@ class TwitterAPIHandler(object):
                 self.que.append(event)
         self.userstreaming = TwitLib2.UserStreamCore(cons_key ,cons_secret ,acs_token ,acs_secret ,callback_userstreaming)
         self.userstreaming.start()
+        self.user_info = self.api.get_verify()
         
                 
     def update(self ,status ,in_reply_to_id = None):
@@ -30,6 +31,10 @@ class TwitterAPIHandler(object):
         
     def get_tl(self ,count = None):
         tl = self.api.get_home_timeline(count)
+        return self.make_tl_tag(tl)
+    
+    def get_mention(self ,count = None):
+        tl = self.api.get_mention(count)
         return self.make_tl_tag(tl)
     
     def create_favorite(self ,tweet_id):
@@ -53,7 +58,7 @@ class TwitterAPIHandler(object):
     def make_tl_tag(self ,tl):
         return "".join([
         """
-        <div class="tweet" id="%s">
+        <div class="tweet %s %s %s" id="%s">
             <img src="%s" />
             <div class="tweet_value">
                 %s(<span class="acountname">@%s</span>)
@@ -64,13 +69,16 @@ class TwitterAPIHandler(object):
                 </div><br />
                 <span class="acounttext">%s</span>
             </div>
-            <hr />
+            <hr size="1" noshade/>
         </div>
-        """%(tweet.id
-            ,tweet.user.profile_image_url 
-            ,tweet.user.name 
-            ,tweet.user.screen_name 
-            ,tweet.text)
+        """%("mypost" if self.user_info.screen_name == tweet.user.screen_name else ""
+            ,"mention" if self.user_info.screen_name in tweet.text else ""
+            ,"retweeted" if tweet.retweeted_status else ""
+            ,tweet.id if not tweet.retweeted_status else tweet.retweeted_status.id
+            ,tweet.user.profile_image_url if not tweet.retweeted_status else tweet.retweeted_status.user.profile_image_url
+            ,tweet.user.name if not tweet.retweeted_status else tweet.retweeted_status.user.name
+            ,tweet.user.screen_name if not tweet.retweeted_status else tweet.retweeted_status.user.screen_name
+            ,tweet.text if not tweet.retweeted_status else tweet.retweeted_status.text)
         for tweet in tl])
         
     

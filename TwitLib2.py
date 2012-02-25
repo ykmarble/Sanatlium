@@ -69,6 +69,15 @@ class TwitterAPICore(object):
         path = "statuses/destroy/%s.json"%tweet.id
         self._http_post("%s%s"%(self.base_url ,path))
         return
+    
+    def get_verify(self):
+        path = "account/verify_credentials.json"
+        connect = self._http_get("%s%s"%(self.base_url ,path))
+        try:
+            response = connect.read().decode("utf-8")
+        finally:
+            connect.close()
+        return User(json.loads(response))
 
     def get_home_timeline(self ,count=None ,since_id=None ,max_id=None):
         path = "statuses/home_timeline.json"
@@ -97,8 +106,8 @@ class TwitterAPICore(object):
             responce = connect.read().decode("utf-8")
         finally:
             connect.close()
-        user = User(status_dict[json.loads(responce)])
-
+        user = User(json.loads(responce))
+        return user
 
     def get_user_timeline(self ,screen_name ,count=None ,since_id=None ,max_id=None ,include_rts=None):
         path = "statuses/user_timeline.json"
@@ -219,13 +228,17 @@ class Tweet(object):
         self.user_id = status_dict["user"]["id"]
         self.text = status_dict["text"]
         self.created_at = status_dict["created_at"]
-        self.favorited = status_dict["favorited"]
+#        self.favorited = status_dict["favorited"]
         self.retweeted = status_dict["retweeted"]
         self.source = status_dict["source"]
         self.in_reply_to_user_id = status_dict["in_reply_to_user_id"]
         self.in_reply_to_status_id = status_dict["in_reply_to_status_id"]
         if status_dict["user"].__len__() >= 2:
             self.user = User(status_dict["user"])
+        try:
+            self.retweeted_status = Tweet(status_dict["retweeted_status"])
+        except KeyError:
+            self.retweeted_status = None
 
 
 class User(object):
