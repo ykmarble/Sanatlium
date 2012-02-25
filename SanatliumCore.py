@@ -50,8 +50,8 @@ class TwitterAPIHandler(object):
         <div class="tweet" id="%s">
             <img src="%s" />
             <div class="tweet_value">
-                %s(@%s)<br />
-                %s
+                %s(<span class="acountname">@%s</span>)<br />
+                <span class="acounttext">%s</span>
             </div>
             <hr />
         </div>

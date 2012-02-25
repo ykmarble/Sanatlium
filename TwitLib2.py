@@ -147,6 +147,8 @@ class TwitterAPICore(object):
         if len(status) > 141:
             status = status[:140]
         args = {"status":status.encode("utf-8")}
+        if in_reply_to:
+            args["in_reply_to_status_id"] = in_reply_to
         connect = self._http_post("%s%s"%(self.base_url ,path) ,args)
         try:
             responce = connect.read().decode("utf-8")
