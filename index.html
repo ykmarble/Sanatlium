@@ -20,7 +20,7 @@
 				//set timeline div size
 				var windowheight = jQuery(window).height();
 				var postformheight = jQuery("#post_form").innerHeight();
-				jQuery("#timeline").height(windowheight-postformheight-33);
+				jQuery("#timeline").height(windowheight-postformheight-35);
 				
 				// set UserStreamings Event Lisetener
 				setInterval(function(){
@@ -33,11 +33,12 @@
 				jQuery("#post_button").click(function(){
 					if (in_reply_to[0] != ""){
 						api_handler.update(jQuery("#post_status").val() ,in_reply_to[0]);
+						in_reply_to = ["" ,""];
+						jQuery("#in_reply_to_indicator").remove();
 					}else{
 						api_handler.update(jQuery("#post_status").val());
 					}
 					jQuery("#post_status").val("");
-					in_reply_to = ["" ,""];
 				});
 				//reply
 				jQuery(".reply").live("click",function(){
@@ -92,6 +93,18 @@
 					jQuery("#in_reply_to_indicator").remove();
 				});
 				
+				
+				//make tab script
+				jQuery(".tab li a").click(function(){
+					jQuery(".tab li a").removeClass("selected");
+					jQuery(this).addClass("selected");
+					jQuery(".maintab").hide();
+					jQuery(jQuery(this).attr("href")).fadeIn(0);
+					return false;
+				});
+				
+				
+				
 				//check if mouse cursor on timeline
 				jQuery("#timeline").mouseover(function(){
 					jQuery(this).focus();
@@ -112,7 +125,7 @@
 				//set Window Resize Event Handler
 				jQuery(window).resize(function(){
 					windowheight = jQuery(window).height();
-					jQuery("#timeline").height(windowheight-postformheight-33);
+					jQuery("#timeline").height(windowheight-postformheight-35);
 				});
 				
 				//set Key Config
@@ -120,6 +133,7 @@
 					"^enter":function(){
 						if (in_reply_to[0] != ""){
 							api_handler.update(jQuery("#post_status").val() ,in_reply_to[0]);
+							jQuery("#in_reply_to_indicator").remove();
 						}else{
 							api_handler.update(jQuery("#post_status").val());
 						}
@@ -136,8 +150,14 @@
 			<textarea id="post_status" rows="4"></textarea><br />
 			<b id="textcount">140</b><button id="post_button">POST</button>
 		</div>
+		<ul class="tab">
+			<li><a href="#timeline" class="selected">TL</a></li>
+			<li><a href="#replytab">Reply</a></li>
+		</ul>
 		<hr />
-		<div id="timeline">
+		<div id="timeline" class="maintab">
+		</div>
+		<div id="replytab" class="maintab">
 		</div>
 	</body>
 </html>

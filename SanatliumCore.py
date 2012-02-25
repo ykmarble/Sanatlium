@@ -56,7 +56,12 @@ class TwitterAPIHandler(object):
         <div class="tweet" id="%s">
             <img src="%s" />
             <div class="tweet_value">
-                %s(<span class="acountname">@%s</span>)<button class="reply">Reply</button><button class="QT">QT</button><button class="fav">fav</button><br />
+                %s(<span class="acountname">@%s</span>)
+                <div class="doicon">
+                    <input type="image" src="icon/reply.png" class="reply">
+                    <input type="image" src="icon/QuoteTweet.png" class="QT">
+                    <input type="image" src="icon/favorite.png" class="fav">
+                </div><br />
                 <span class="acounttext">%s</span>
             </div>
             <hr />

@@ -8,7 +8,9 @@ body{
 	*/
 }
 
-textarea#post_status{width: 100%;}
+textarea#post_status{
+	width: 100%;
+}
 
 button{
 	font-size: 100%;
@@ -19,14 +21,45 @@ button#post_button{float: right;}
 
 hr{clear: both;}
 
-#timeline{
+.tab ul{ 
+	
+}
+.tab li{
+	list-style-type:none;
+	text-align:center;
+	float:left;
+	width:80px;
+	height:25px;
+	background:-webkit-gradient(linear, left top, left bottom, from(rgba(190,190,190,0.7)), to(rgba(140,140,140,0.7)));
+}
+.selected{
+	background:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.8)), to(rgba(205,205,205,0.8)));
+}
+.tab a{
+	text-decoration:none;
+	color:#000;
+	font-size:110%;
+	display:block;
+	line-height:25px;
+}
+
+#timeline,#replytab{
 	width: 100%;
 	overflow: scroll;
+	background:rgba(255,255,255,0.5);
+}
+
+#replytab{
+	display:none;
 }
 
 #textcount{
 	font-size:130%;
 }
+
+.tweet input{opacity:0.5;width:25px;height:25px;}
+.doicon{float:right;text-align:right;}
+
 
 .tweet{	width: 100%;}
 .tweet_image{padding-bottom:5px;}
