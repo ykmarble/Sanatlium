@@ -1,22 +1,25 @@
-��Sanatlium Twitter Client
+◇Sanatlium Twitter Client
 
-�`�T�v�`
-Titanium��Twitter�N���C�A���g����B
-����ɂ�oauth2 ,httplib2 ,simplejson ,tweepy ,jQuery1.4.1 ,gpKey�ӂ肪�K�v�ł��B��Titanium�����B
-�킴�킴�g���Ȃ�Đl�͂��Ȃ�������J�̕K�v�͖����ł��傤���A���̃R�[�h�������N�����u���傗�������̃R�[�h�󂯂邗�������v���ĂȂ��āA
-�܁[�Ԃ�ɗl�X�ȃv���O���~���O�Z�p�������Ă����l������邱�Ƃ𑽑�Ɋ��҂��Ă��܂��B
+～概要～
+TitaniumでTwitterクライアント制作。
+動作にはoauth2 ,httplib2 ,simplejson ,tweepy ,jQuery1.4.1 ,gpKey辺りが必要です。後Titanium環境も。
+わざわざ使うなんて人はいないから公開の必要は無いでしょうが、このコードを見た誰かが「ちょｗｗｗこのコード受けるｗｗｗｗ」ってなって、
+まーぶるに様々なプログラミング技術を教えてくれる人が現れることを多大に期待しています。
 
-�`�g�p�@�`
-�����̊��ł����m�F���ĂȂ��̂��ǁA���点��̂͑����ʓ|�B
-�^���ǂ����Sanatlium.py��consumer��token��������Ɛݒ肷��Α���܂��B
+～使用法～
+自分の環境でしか確認してないのけど、走らせるのは多分面倒。
+運が良ければSanatlium.pyのconsumerとtokenをきちんと設定すれば走ります。
 
-�`���C�Z���X�`
-MIT�Ƃ��ɂ��Ă��������Ǌ��Ƃǂ��ł������ł��B���쌠�����B�Ă��Ȃ�ς�Ȃ�D���ɂ��Ă��������B
-�����A���������Ă��m��Ȃ��ł��B�A����ɋ�s������b������ʂɂ͂Ȃ��Ă���邩������܂���B
+～ライセンス～
+MITとかにしてもいいけど割とどうでもいいです。著作権放棄。焼くなり煮るなり好きにしてください。
+ただ、何があっても知らないです。連絡先に愚痴ったら話し相手位にはなってくれるかもしれません。
 
-�`���������āFSanatorium�`
-�ق��Ƃ��ĉ������B�����p�ɂ킴�Ƃł��B�����ė×{������Ȃ��ł��B���ރg���E���ł��B
+～もしかして：Sanatorium～
+ほっといて下さい。検索用にわざとです。決して療養所じゃないです。佐奈トリウムです。
 
-�`�A����`
-Twitter Account:@yk_marble�i���������͂��j
-mail:milkcocoapple@gmail.com�i�قڌ��Ȃ��j
+～連絡先～
+Twitter Account:@yk_marble（だいたい届く）
+mail:milkcocoapple@gmail.com（ほぼ見ない）
+
+～謝辞～
+ふゆはらさん(@nekotouma0114)に様々な助言をいただきました。この場で感謝の意を表明します。多分。

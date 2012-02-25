@@ -37,6 +37,12 @@ class TwitterAPIHandler(object):
             thread.start_new_thread(self.api.create_favorite ,(tweet_id,))
         except:
             print "error in create_favorite"
+
+    def create_retweet(self ,tweet_id):
+        try:
+            thread.start_new_thread(self.api.create_retweet ,(tweet_id,))
+        except:
+            print "error in create_retweet"
         
     def check_que(self):
         if self.userstreaming.que:
@@ -50,7 +56,7 @@ class TwitterAPIHandler(object):
         <div class="tweet" id="%s">
             <img src="%s" />
             <div class="tweet_value">
-                %s(<span class="acountname">@%s</span>)<br />
+                %s(<span class="acountname">@%s</span>)<button class="reply">Reply</button><button class="QT">QT</button><button class="fav">fav</button><br />
                 <span class="acounttext">%s</span>
             </div>
             <hr />

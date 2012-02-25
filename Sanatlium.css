@@ -14,6 +14,7 @@ button{
 	font-size: 100%;
 	padding: 5px;
 }
+button#in_reply_to_delete{float:right;}
 button#post_button{float: right;}
 
 hr{clear: both;}
@@ -21,6 +22,10 @@ hr{clear: both;}
 #timeline{
 	width: 100%;
 	overflow: scroll;
+}
+
+#textcount{
+	font-size:130%;
 }
 
 .tweet{	width: 100%;}

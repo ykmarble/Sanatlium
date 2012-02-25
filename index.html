@@ -12,7 +12,7 @@
 		<script type="text/javascript">
 			jQuery(function(){
 				//var
-				var in_reply_to_id = "";
+				var in_reply_to = ["" ,""];//0:in_reply_to_id 1:status
 				
 				//load last 50 Home TimeLine
 				jQuery("#timeline").prepend(api_handler.get_tl(50));
@@ -31,20 +31,24 @@
 				//set UI Event Handler
 				//POST button
 				jQuery("#post_button").click(function(){
-					if (in_reply_to_id){
-						api_handler.update(jQuery("#post_status").val() ,in_reply_to_id);
+					if (in_reply_to[0] != ""){
+						api_handler.update(jQuery("#post_status").val() ,in_reply_to[0]);
 					}else{
 						api_handler.update(jQuery("#post_status").val());
 					}
 					jQuery("#post_status").val("");
-					in_reply_to_id = "";
+					in_reply_to = ["" ,""];
 				});
 				//reply
-				jQuery(".tweet").live("click",function(){
-					var getAcount = jQuery(this).find(".acountname").text();
-					jQuery("#post_status").text(getAcount);
+				jQuery(".reply").live("click",function(){
+					var getAcount = jQuery(this).parents(".tweet").find(".acountname").text();
+					jQuery("#post_status").text(getAcount+" ");
 					jQuery("#post_status").focus();
-					in_reply_to_id = jQuery(this).attr("id");
+					in_reply_to[0] = jQuery(this).parents(".tweet").attr("id");
+					in_reply_to[1] = "in reply to..."+getAcount+":"+jQuery(this).parents(".tweet").find(".acounttext").text();
+					jQuery("#post_form").prepend("\
+						<div id='in_reply_to_indicator'>"+in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button></div>\
+						");
 					var getAcount ="";
 				});
 				/*
@@ -57,13 +61,36 @@
 					var getAcount ="";
 				});
 				*/
-				/*
+				//QT
+				jQuery(".QT").live("click",function(){
+					var getAcount = jQuery(this).parents(".tweet").find(".acountname").text();
+					var getText = jQuery(this).parents(".tweet").find(".acounttext").text();
+					jQuery("#post_status").text(" QT "+getAcount+": "+getText);
+					jQuery("#post_status").focus();
+					in_reply_to[0] = jQuery(this).parents(".tweet").attr("id");
+					in_reply_to[1] = "in reply to..."+getAcount+":"+getText;
+					jQuery("#post_form").prepend("\
+						<div id='in_reply_to_indicator'>"+in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button></div>\
+						");
+					var getAcount ="";
+				});
 				//create favorite
-				jQuery(".tweet").live("click",function(){
-					api_handler.create_favorite(jQuery(this).attr("id"));
+				jQuery(".fav").live("click",function(){
+					api_handler.create_favorite(jQuery(this).parents(".tweet").attr("id"));
 					alert("favarited");
 				});
+				/*
+				//create RT
+				jQuery(".tweet").live("click",function(){
+					api_handler.create_retweet(jQuery(this).attr("id"));
+					alert("RTed");
+				});
 				*/
+				//in_reply_to_indicator
+				jQuery("#in_reply_to_delete").live("click" ,function(){
+					in_reply_to = ["" ,""];
+					jQuery("#in_reply_to_indicator").remove();
+				});
 				
 				//check if mouse cursor on timeline
 				jQuery("#timeline").mouseover(function(){
@@ -91,13 +118,13 @@
 				//set Key Config
 				jQuery("#post_form").gpKey("down" ,{
 					"^enter":function(){
-						if (in_reply_to_id){
-							api_handler.update(jQuery("#post_status").val() ,in_reply_to_id);
+						if (in_reply_to[0] != ""){
+							api_handler.update(jQuery("#post_status").val() ,in_reply_to[0]);
 						}else{
 							api_handler.update(jQuery("#post_status").val());
 						}
 						jQuery("#post_status").val("");
-						in_reply_to_id = "";
+						in_reply_to = ["" ,""];
 					},
 				});
 			});
