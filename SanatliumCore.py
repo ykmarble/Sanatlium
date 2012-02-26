@@ -30,12 +30,11 @@ class TwitterAPIHandler(object):
 
         
     def get_tl(self ,count = None):
-        tl = self.api.get_home_timeline(count)
-        return self.make_tl_tag(tl)
-    
+        thread.start_new_thread(lambda self ,count:self.userstreaming.que.extend(self.api.get_home_timeline(count)) ,(self ,count))
+
     def get_mention(self ,count = None):
-        tl = self.api.get_mention(count)
-        return self.make_tl_tag(tl)
+        thread.start_new_thread(lambda self ,count:self.userstreaming.que.extend(self.api.get_mention(count)) ,(self ,count))
+
     
     def create_favorite(self ,tweet_id):
         try:
@@ -53,8 +52,34 @@ class TwitterAPIHandler(object):
         if self.userstreaming.que:
             tl = self.userstreaming.que[:]
             self.userstreaming.que = []
-            return self.make_tl_tag(tl)
-            
+            return tl
+        else:
+            return []
+
+    def make_tweet_tag(self ,tweet):
+        return """
+        <div class="tweet %s %s %s" id="%s">
+            <img src="%s" />
+            <div class="tweet_value">
+                %s(<span class="acountname">@%s</span>)
+                <div class="doicon">
+                    <input type="image" src="icon/reply.png" class="reply">
+                    <input type="image" src="icon/QuoteTweet.png" class="QT">
+                    <input type="image" src="icon/favorite.png" class="fav">
+                </div><br />
+                <span class="acounttext">%s</span>
+            </div>
+            <hr size="1" noshade/>
+        </div>
+        """%("mypost" if self.user_info.screen_name == tweet.user.screen_name else ""
+            ,"mention" if self.user_info.screen_name in tweet.text else ""
+            ,"retweeted" if tweet.retweeted_status else ""
+            ,tweet.id if not tweet.retweeted_status else tweet.retweeted_status.id
+            ,tweet.user.profile_image_url if not tweet.retweeted_status else tweet.retweeted_status.user.profile_image_url
+            ,tweet.user.name if not tweet.retweeted_status else tweet.retweeted_status.user.name
+            ,tweet.user.screen_name if not tweet.retweeted_status else tweet.retweeted_status.user.screen_name
+            ,tweet.text if not tweet.retweeted_status else tweet.retweeted_status.text)
+
     def make_tl_tag(self ,tl):
         return "".join([
         """
@@ -81,4 +106,16 @@ class TwitterAPIHandler(object):
             ,tweet.text if not tweet.retweeted_status else tweet.retweeted_status.text)
         for tweet in tl])
         
-    
+class TabHandler:
+    def __init__(self ,draw_handler):
+        self.tab_dict = {}
+        self.draw_handler = draw_handler
+        
+    def make_tab(self ,id ,func):
+        self.tab_dict[id] = func
+        
+    def update(self ,tl):
+        for tweet in tl:
+            for id in self.tab_dict.keys():
+                if self.tab_dict[id](tweet):
+                    self.draw_handler(id ,tweet)

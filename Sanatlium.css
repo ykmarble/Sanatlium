@@ -48,20 +48,30 @@ hr{
 .maintab{
 	width: 100%;
 	overflow: scroll;
+	display:none;
 }
 .mypost{background:rgb(184,212,255)}
 .mention{background:rgb(255,222,166)}
 .retweeted{background:rgb(183,255,168)}
 
-#replytab{
+#reply_tip ,#QT_tip ,#fav_tip{
+	padding:1px;
+	background:rgb(250,229,123);
+	border:solid 1px #C0C0C0;;
+	font-size:x-small;
 	display:none;
+	position:absolute;
+}
+
+#timeline{
+	display:block;
 }
 
 #textcount{
 	font-size:130%;
 }
 
-.tweet input{opacity:0.5;width:25px;height:25px;}
+.tweet input{width:25px;height:25px;}
 .doicon{float:right;text-align:right;}
 
 

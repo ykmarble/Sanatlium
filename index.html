@@ -8,17 +8,32 @@
 		<script type="text/python">
 			import SanatliumCore
 			api_handler = SanatliumCore.TwitterAPIHandler()
+			tab_handler = SanatliumCore.TabHandler(lambda tweet:alert("drow"))
+			
 		</script>
 		<script type="text/javascript">
 			jQuery(function(){
-				//var
+				//set tab_handler
+				tab_handler.make_tab("timeline" ,function(tweet){return true});
+				tab_handler.make_tab("replytab" ,function(tweet){
+					return tweet.text.indexOf(api_handler.user_info.screen_name) != -1
+				});
+				tab_handler.make_tab("myposttab" ,function(tweet){
+					return tweet.user.screen_name == api_handler.user_info.screen_name
+				});
+				tab_handler.make_tab("marbletab" ,function(tweet){
+					return tweet.text.indexOf("まーぶる") != -1
+				});
+				tab_handler.draw_handler = function(id ,tweet){
+					jQuery("#"+id).prepend(api_handler.make_tweet_tag(tweet));
+				};
+				
+				//global variable
 				var in_reply_to = ["" ,""];//0:in_reply_to_id 1:status
 				
 				//load last 200 Home TimeLine and reply
-				var mention_html = api_handler.get_mention(200);
-				jQuery("#timeline").prepend(mention_html);
-				jQuery("#replytab").prepend(mention_html);
-				jQuery("#timeline").prepend(api_handler.get_tl(200));
+				api_handler.get_mention(20);
+				api_handler.get_tl(20);
 				
 				//set timeline div size
 				var postformheight = jQuery("#post_form").innerHeight();	
@@ -27,7 +42,7 @@
 				
 				// set UserStreamings Event Lisetener
 				setInterval(function(){
-					jQuery("#timeline").prepend(api_handler.check_que());
+					tab_handler.update(api_handler.check_que());
 				} ,500);
 				
 				
@@ -50,9 +65,13 @@
 					jQuery("#post_status").focus();
 					in_reply_to[0] = jQuery(this).parents(".tweet").attr("id");
 					in_reply_to[1] = "in reply to..."+getAcount+":"+jQuery(this).parents(".tweet").find(".acounttext").text();
-					jQuery("#post_form").prepend("\
-						<div id='in_reply_to_indicator'>"+in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button></div>\
-						");
+					if (jQuery("#in_reply_to_indicator").size() == 0){
+						jQuery("#post_form").prepend("\
+							<div id='in_reply_to_indicator'>"+in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button></div>\
+							");
+					}else{
+						jQuery("#in_reply_to_indicator").html(in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button>");
+					}
 					var getAcount ="";
 				});
 				/*
@@ -73,9 +92,13 @@
 					jQuery("#post_status").focus();
 					in_reply_to[0] = jQuery(this).parents(".tweet").attr("id");
 					in_reply_to[1] = "in reply to..."+getAcount+":"+getText;
-					jQuery("#post_form").prepend("\
-						<div id='in_reply_to_indicator'>"+in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button></div>\
-						");
+					if (jQuery("#in_reply_to_indicator").size() == 0){
+						jQuery("#post_form").prepend("\
+							<div id='in_reply_to_indicator'>"+in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button></div>\
+							");
+					}else{
+						jQuery("#in_reply_to_indicator").html(in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button>");
+					}
 					var getAcount ="";
 				});
 				//create favorite
@@ -95,6 +118,7 @@
 					in_reply_to = ["" ,""];
 					jQuery("#in_reply_to_indicator").remove();
 				});
+				/*
 				//reply bom
 				jQuery(".reply_bom").live("click",function(){
 				var getAcount = jQuery(this).parents(".tweet").find(".acountname").text();
@@ -104,6 +128,7 @@
      				}
      			getAcount = "";
     			});
+    			*/
 							
 				//make tab script
 				jQuery(".tab li a").click(function(){
@@ -117,7 +142,26 @@
 				//check if mouse cursor on timeline
 				jQuery(".maintab").mouseover(function(){
 					jQuery(this).focus();
+     				jQuery("#reply_tip").css("display","none");
+     				jQuery("#QT_tip").css("display","none");
+     				jQuery("#fav_tip").css("display","none");					
 				});
+				
+				//tool tip
+				jQuery(".tweet input").live("mouseover",function(e){
+     				var tipID = "#"+jQuery(this).attr("class")+"_tip";
+     				jQuery(tipID).css({"top":e.pageY-15+"px","left":e.pageX-15+"px"});
+     				jQuery(tipID).fadeIn(300);
+     			});
+     			jQuery(".tweet input").live("mouseout",function(){
+     				jQuery("#reply_tip").css("display","none");
+     				jQuery("#QT_tip").css("display","none");
+     				jQuery("#fav_tip").css("display","none");
+     			});
+  				jQuery(".tweet input").live("mousemove" ,function(e){
+  					var tipID = "#"+jQuery(this).attr("class")+"_tip";
+      				jQuery(tipID).css({"top":e.pageY-15+"px","left":e.pageX-15+"px"});
+     			});
 				
 				//display string length of post_form
 				jQuery("#post_status").bind("change keyup",function(){
@@ -155,11 +199,20 @@
 		<ul class="tab">
 			<li><a href="#timeline" class="selected">TimeLine</a></li>
 			<li><a href="#replytab">Mentions</a></li>
+			<li><a href="#myposttab">my post</a></li>
+			<li><a href="#marbletab">まーぶる</a></li>
 		</ul>
 		<hr />
 		<div id="timeline" class="maintab">
 		</div>
 		<div id="replytab" class="maintab">
 		</div>
+		<div id="myposttab" class="maintab">
+		</div>		
+		<div id="marbletab" class="maintab">
+		</div>		
+		<div id="reply_tip">reply</div>
+		<div id="QT_tip">QT</div>
+		<div id="fav_tip">favorite</div>
 	</body>
 </html>
