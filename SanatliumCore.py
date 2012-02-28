@@ -14,7 +14,7 @@ class TwitterAPIHandler(object):
         self.api = TwitLib2.TwitterAPICore(cons_key ,cons_secret ,acs_token ,acs_secret)
         def callback_userstreaming(self ,event):
             if isinstance(event ,TwitLib2.Tweet):
-                self.que.append(event)
+                self.que.put([event])
         self.userstreaming = TwitLib2.UserStreamCore(cons_key ,cons_secret ,acs_token ,acs_secret ,callback_userstreaming)
         self.userstreaming.start()
         self.user_info = self.api.get_verify()
@@ -30,10 +30,13 @@ class TwitterAPIHandler(object):
 
         
     def get_tl(self ,count = None):
-        thread.start_new_thread(lambda self ,count:self.userstreaming.que.extend(self.api.get_home_timeline(count)) ,(self ,count))
+        thread.start_new_thread(lambda self ,count:self.userstreaming.que.put(self.api.get_home_timeline(count)) ,(self ,count))
 
     def get_mention(self ,count = None):
-        thread.start_new_thread(lambda self ,count:self.userstreaming.que.extend(self.api.get_mention(count)) ,(self ,count))
+        thread.start_new_thread(lambda self ,count:self.userstreaming.que.put(self.api.get_mention(count)) ,(self ,count))
+
+    def get_user_tl(self ,screen_name ,count = None):
+        thread.start_new_thread(lambda self ,screen_name ,count:self.userstreaming.que.put(self.api.get_user_timeline(screen_name ,count)) ,(self ,screen_name ,count))
 
     
     def create_favorite(self ,tweet_id):
@@ -49,12 +52,10 @@ class TwitterAPIHandler(object):
             print "error in create_retweet"
         
     def check_que(self):
-        if self.userstreaming.que:
-            tl = self.userstreaming.que[:]
-            self.userstreaming.que = []
-            return tl
-        else:
-            return []
+        tl = []
+        while not self.userstreaming.que.empty():
+            tl.extend(self.userstreaming.que.get())
+        return tl
 
     def make_tweet_tag(self ,tweet):
         return """
@@ -109,13 +110,18 @@ class TwitterAPIHandler(object):
 class TabHandler:
     def __init__(self ,draw_handler):
         self.tab_dict = {}
+        self.unread_dict = {}
         self.draw_handler = draw_handler
+        self.container = []
         
     def make_tab(self ,id ,func):
         self.tab_dict[id] = func
+        self.unread_dict[id] = 0
         
     def update(self ,tl):
+        self.container.extend(tl)
         for tweet in tl:
             for id in self.tab_dict.keys():
                 if self.tab_dict[id](tweet):
                     self.draw_handler(id ,tweet)
+                    self.unread_dict[id] += 1

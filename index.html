@@ -32,18 +32,31 @@
 				var in_reply_to = ["" ,""];//0:in_reply_to_id 1:status
 				
 				//load last 200 Home TimeLine and reply
-				api_handler.get_mention(20);
-				api_handler.get_tl(20);
+				api_handler.get_user_tl("yk_marble" ,200);
+				api_handler.get_mention(200);
+				api_handler.get_tl(200);
 				
 				//set timeline div size
 				var postformheight = jQuery("#post_form").innerHeight();	
 				var windowheight = jQuery(window).height();
-				jQuery(".maintab").height(windowheight-postformheight-35);
+				jQuery(".maintab").height(windowheight-postformheight-60);
 				
 				// set UserStreamings Event Lisetener
 				setInterval(function(){
 					tab_handler.update(api_handler.check_que());
+					jQuery("#post_count").text(tab_handler.container.__len__());
 				} ,500);
+				/*
+				//reflesh html
+    			setInterval(function(){
+     				var postCount= jQuery(".tweet").length;
+     				if(postCount >500){
+      					for(var c = postCount; 500<=c;c--){
+       						jQuery(".tweet").eq(c).remove();
+      					}
+     				}
+    			},500);
+				*/
 				
 				
 				//set UI Event Handler
@@ -142,25 +155,21 @@
 				//check if mouse cursor on timeline
 				jQuery(".maintab").mouseover(function(){
 					jQuery(this).focus();
-     				jQuery("#reply_tip").css("display","none");
-     				jQuery("#QT_tip").css("display","none");
-     				jQuery("#fav_tip").css("display","none");					
+     				jQuery(".tooltip").css("display","none");				
 				});
 				
 				//tool tip
 				jQuery(".tweet input").live("mouseover",function(e){
      				var tipID = "#"+jQuery(this).attr("class")+"_tip";
-     				jQuery(tipID).css({"top":e.pageY-15+"px","left":e.pageX-15+"px"});
+     				jQuery(tipID).css({"top":e.pageY-20+"px","left":e.pageX-20+"px"});
      				jQuery(tipID).fadeIn(300);
      			});
      			jQuery(".tweet input").live("mouseout",function(){
-     				jQuery("#reply_tip").css("display","none");
-     				jQuery("#QT_tip").css("display","none");
-     				jQuery("#fav_tip").css("display","none");
+     				jQuery(".tooltip").css("display","none");
      			});
   				jQuery(".tweet input").live("mousemove" ,function(e){
   					var tipID = "#"+jQuery(this).attr("class")+"_tip";
-      				jQuery(tipID).css({"top":e.pageY-15+"px","left":e.pageX-15+"px"});
+      				jQuery(tipID).css({"top":e.pageY-20+"px","left":e.pageX-20+"px"});
      			});
 				
 				//display string length of post_form
@@ -178,7 +187,7 @@
 				//set Window Resize Event Handler
 				jQuery(window).resize(function(){
 					windowheight = jQuery(window).height();
-					jQuery(".maintab").height(windowheight-postformheight-35);
+					jQuery(".maintab").height(windowheight-postformheight-60);
 				});
 				
 				//set Key Config
@@ -210,9 +219,12 @@
 		<div id="myposttab" class="maintab">
 		</div>		
 		<div id="marbletab" class="maintab">
-		</div>		
-		<div id="reply_tip">reply</div>
-		<div id="QT_tip">QT</div>
-		<div id="fav_tip">favorite</div>
+		</div>
+		<div id="status_bar">
+			post数:<span id="post_count"></span>
+		</div>	
+		<div id="reply_tip" class="tooltip">reply</div>
+		<div id="QT_tip" class="tooltip">QT</div>
+		<div id="fav_tip" class="tooltip">favorite</div>
 	</body>
 </html>

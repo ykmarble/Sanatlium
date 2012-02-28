@@ -3,6 +3,7 @@ import urllib2
 import simplejson as json
 import threading
 import oauth2
+import Queue
 
 class TwitterAPICore(object):
     base_url = "https://api.twitter.com/1/"
@@ -85,11 +86,12 @@ class TwitterAPICore(object):
         if count:
             if count > 200:
                count = 200
-            args["count"] = count
+            args["count"] = int(count)
         if since_id:
            args["since_id"] = since_id
         if max_id:
            args["max_id"] = max_id
+        print "hometl:" ,args
         connect = self._http_get("%s%s"%(self.base_url ,path) ,args)
         try:
             responce = connect.read().decode("utf-8")
@@ -115,13 +117,14 @@ class TwitterAPICore(object):
         if count:
             if count > 200:
                count = 200
-            args["count"] = count
+            args["count"] = int(count)
         if since_id:
            args["since_id"] = since_id
         if max_id:
            args["max_id"] = max_id
         if include_rts:
            args["include_rts"] = include_rts
+        print "usertl:" ,args
         connect = self._http_get("%s%s"%(self.base_url ,path) ,args)
         try:
             responce = connect.read().decode("utf-8")
@@ -137,11 +140,12 @@ class TwitterAPICore(object):
         if count:
             if count > 200:
                count = 200
-            args["count"] = count
+            args["count"] = int(count)
         if since_id:
            args["since_id"] = since_id
         if max_id:
            args["max_id"] = max_id
+        print "mantion:" ,args
         connect = self._http_get("%s%s"%(self.base_url ,path) ,args)
         try:
             responce = connect.read().decode("utf-8")
@@ -196,7 +200,7 @@ class UserStreamCore(threading.Thread):
         Handler.apply_auth(url ,"POST" ,header ,body)
         req = urllib2.Request(url ,headers = header)
         self.stream = urllib2.urlopen(req ,urllib.urlencode(body))
-        self.que = []
+        self.que = Queue.Queue()
         if callback:
             self.callback = callback
         else:
