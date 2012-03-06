@@ -32,9 +32,9 @@
 				var in_reply_to = ["" ,""];//0:in_reply_to_id 1:status
 				
 				//load last 200 Home TimeLine and reply
-				api_handler.get_user_tl("yk_marble" ,200);
-				api_handler.get_mention(200);
-				api_handler.get_tl(200);
+				//api_handler.get_user_tl("yk_marble" ,200);
+				//api_handler.get_mention(200);
+				//api_handler.get_tl(200);
 				
 				//set timeline div size
 				var postformheight = jQuery("#post_form").innerHeight();	
@@ -194,7 +194,36 @@
 				jQuery("#post_form").gpKey("down" ,{
 					"^enter":function(){
 						jQuery("#post_button").click();
+						
 					},
+				});
+				
+				//delay post
+				jQuery("#after_post").live("click" ,function(){
+					jQuery("#backgray").fadeIn(1000);
+					jQuery("#outimage").fadeIn(900);
+					jQuery("#outimage").fadeIn(500).html("<div id='after_top'>予約投稿</div><div id='after_bottom'><span style='font-size:200%;'>何を投稿する？</span><br /><textarea id='after_area'></textarea><br /><input type='text' id='gethour' value='0' />時間<input type='text' id='getminute' value='0' />分<input type='text' id='getsecond' value='0' />秒後に送信する<br /><input type='button' id='gopost' value='予約投稿' /></div>");
+				});
+				jQuery("#after_top").live("click" ,function(){
+					jQuery("#outimage").fadeOut(1000);
+					jQuery("#backgray").fadeOut(1000);	
+    			});
+    			jQuery("#backgray").live("click" ,function(){
+					jQuery("#outimage").fadeOut(1000);
+					jQuery("#backgray").fadeOut(1000);	
+    			});
+				jQuery("#gopost").live("click" ,function(){
+					var getH = jQuery("#gethour").val()*60*60*1000;
+					var getM = jQuery("#getminute").val()*60*1000;
+					var getS = jQuery("#getsecond").val()*1000;
+					var getT = getH+getM+getS;
+					var text = jQuery("#after_area").val();
+					jQuery("#after_area").val("");
+					setTimeout(function(s){
+						api_handler.update(text);
+					}　,getT ,text);
+					jQuery("#outimage").fadeOut(1000);
+					jQuery("#backgray").fadeOut(1000);	
 				});
 			});
 		</script>
@@ -203,7 +232,7 @@
 	<body>
 		<div id="post_form">
 			<textarea id="post_status" rows="4"></textarea><br />
-			<b id="textcount">140</b><button id="post_button">POST</button>
+			<b id="textcount">140</b><button id="after_post">delay post</button><button id="post_button">POST</button>
 		</div>
 		<ul class="tab">
 			<li><a href="#timeline" class="selected">TimeLine</a></li>
@@ -223,8 +252,15 @@
 		<div id="status_bar">
 			post数:<span id="post_count"></span>
 		</div>	
+		
+		<!--tool tips--->
 		<div id="reply_tip" class="tooltip">reply</div>
 		<div id="QT_tip" class="tooltip">QT</div>
 		<div id="fav_tip" class="tooltip">favorite</div>
+		
+		<!--for delay post-->
+		<div id='backgray'></div>
+		<div id='outimage'>
+		</div>
 	</body>
 </html>

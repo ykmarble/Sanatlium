@@ -39,7 +39,12 @@ class TwitterAPICore(object):
     def check_following(self ,target):
         path = "friendships/show.json"
         arg = {"target_id":target.id}
-        #GET
+        response = self._http_get("%s%s"%(self.base_url ,path), args)
+        try:
+            following_json = response.read().decode("utf-8")
+        finally:
+            response.close()
+        return [User(following) for following in json.loads(following_json)]
 
     def create_favorite(self ,id):
         path = "favorites/create/%s.json"%id
