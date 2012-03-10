@@ -1,6 +1,7 @@
 import TwitLib2
 import thread
 import urllib2
+import webbrowser
 
 class TwitterAPIHandler(object):
     def __init__(self):
@@ -56,11 +57,14 @@ class TwitterAPIHandler(object):
         while not self.userstreaming.que.empty():
             tl.extend(self.userstreaming.que.get())
         return tl
+    
+    def urlopen(self ,url):
+        webbrowser.open(url)
 
     def make_tweet_tag(self ,tweet):
         return """
         <div class="tweet %s %s %s" id="%s">
-            <img src="%s" />
+            <img src="%s" class="icon" />
             <div class="tweet_value">
                 %s(<span class="acountname">@%s</span>)
                 <div class="doicon">

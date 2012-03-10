@@ -126,11 +126,18 @@
 					alert("RTed");
 				});
 				*/
-				//in_reply_to_indicator
+				//icon clicked
+				jQuery(".icon").live("click" ,function(){
+					var memo = jQuery(this).parent().find(".acountname").text();
+					api_handler.urlopen("https://twitter.com/"+memo.slice(1));
+				});
+				//delete in_reply_to
 				jQuery("#in_reply_to_delete").live("click" ,function(){
 					in_reply_to = ["" ,""];
 					jQuery("#in_reply_to_indicator").remove();
 				});
+				
+				
 				/*
 				//reply bom
 				jQuery(".reply_bom").live("click",function(){
