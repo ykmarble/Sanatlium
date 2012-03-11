@@ -131,6 +131,10 @@
 					var memo = jQuery(this).parent().find(".acountname").text();
 					api_handler.urlopen("https://twitter.com/"+memo.slice(1));
 				});
+				//anchor clicked
+				jQuery("a").live("click" ,function(){
+					api_handler.urlopen(jQuery(this).attr("href"));
+				});
 				//delete in_reply_to
 				jQuery("#in_reply_to_delete").live("click" ,function(){
 					in_reply_to = ["" ,""];

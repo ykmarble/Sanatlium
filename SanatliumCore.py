@@ -2,6 +2,7 @@ import TwitLib2
 import thread
 import urllib2
 import webbrowser
+import re
 
 class TwitterAPIHandler(object):
     def __init__(self):
@@ -19,6 +20,8 @@ class TwitterAPIHandler(object):
         self.userstreaming = TwitLib2.UserStreamCore(cons_key ,cons_secret ,acs_token ,acs_secret ,callback_userstreaming)
         self.userstreaming.start()
         self.user_info = self.api.get_verify()
+        self.url_anchor_re = re.compile(r"(https?://[^ ]+)( |$)")
+        self.name_anchor_re = re.compile(r"@(\w+)")
         
                 
     def update(self ,status ,in_reply_to_id = None):
@@ -60,13 +63,18 @@ class TwitterAPIHandler(object):
     
     def urlopen(self ,url):
         webbrowser.open(url)
-
+        
+    def wrap_anchor(self ,text):
+        url_wraped = self.url_anchor_re.sub(r"<a href='\1' onclick='return false'>\1</a>\2" ,text)
+        name_wraped = self.name_anchor_re.sub(r"<a href='https://twitter.com/\1' onclick='return false'>@\1</a>" ,url_wraped)
+        return name_wraped
+    
     def make_tweet_tag(self ,tweet):
         return """
         <div class="tweet %s %s %s" id="%s">
             <img src="%s" class="icon" />
             <div class="tweet_value">
-                %s(<span class="acountname">@%s</span>)
+                %s(<a href="https://twitter.com/%s" class="acountname" onclick='return false'>@%s</a>)
                 <div class="doicon">
                     <input type="image" src="icon/reply.png" class="reply">
                     <input type="image" src="icon/QuoteTweet.png" class="QT">
@@ -82,34 +90,12 @@ class TwitterAPIHandler(object):
             ,tweet.id if not tweet.retweeted_status else tweet.retweeted_status.id
             ,tweet.user.profile_image_url if not tweet.retweeted_status else tweet.retweeted_status.user.profile_image_url
             ,tweet.user.name if not tweet.retweeted_status else tweet.retweeted_status.user.name
+            ,tweet.user.screen_name if not tweet.retweeted_status else tweet.retweeted_status.user.name
             ,tweet.user.screen_name if not tweet.retweeted_status else tweet.retweeted_status.user.screen_name
-            ,tweet.text if not tweet.retweeted_status else tweet.retweeted_status.text)
+            ,self.wrap_anchor(tweet.text) if not tweet.retweeted_status else self.wrap_anchor(tweet.retweeted_status.text))
 
     def make_tl_tag(self ,tl):
-        return "".join([
-        """
-        <div class="tweet %s %s %s" id="%s">
-            <img src="%s" />
-            <div class="tweet_value">
-                %s(<span class="acountname">@%s</span>)
-                <div class="doicon">
-                    <input type="image" src="icon/reply.png" class="reply">
-                    <input type="image" src="icon/QuoteTweet.png" class="QT">
-                    <input type="image" src="icon/favorite.png" class="fav">
-                </div><br />
-                <span class="acounttext">%s</span>
-            </div>
-            <hr size="1" noshade/>
-        </div>
-        """%("mypost" if self.user_info.screen_name == tweet.user.screen_name else ""
-            ,"mention" if self.user_info.screen_name in tweet.text else ""
-            ,"retweeted" if tweet.retweeted_status else ""
-            ,tweet.id if not tweet.retweeted_status else tweet.retweeted_status.id
-            ,tweet.user.profile_image_url if not tweet.retweeted_status else tweet.retweeted_status.user.profile_image_url
-            ,tweet.user.name if not tweet.retweeted_status else tweet.retweeted_status.user.name
-            ,tweet.user.screen_name if not tweet.retweeted_status else tweet.retweeted_status.user.screen_name
-            ,tweet.text if not tweet.retweeted_status else tweet.retweeted_status.text)
-        for tweet in tl])
+        return "".join(map(self.make_tweet_tag ,tl))
         
 class TabHandler:
     def __init__(self ,draw_handler):
