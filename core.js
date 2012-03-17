@@ -70,11 +70,11 @@ jQuery(function(){
 	});
 	//reply
 	jQuery(".reply").live("click",function(){
-		var screenname = jQuery(this).parents(".tweet").find(".acountname").text();
+		var screenname = jQuery(this).parents(".tweet").find(".accountname").text();
 		jQuery("#post_status").text("@"+screenname+" ");
 		jQuery("#post_status").focus();
 		in_reply_to_id = jQuery(this).parents(".tweet").attr("id");
-		var in_reply_to_status = "in reply to...@"+screenname+":"+jQuery(this).parents(".tweet").find(".acounttext").text();
+		var in_reply_to_status = "in reply to...@"+screenname+":"+jQuery(this).parents(".tweet").find(".accounttext").text();
 		if (jQuery("#in_reply_to_indicator").size() == 0){
 			jQuery("#post_form").prepend( 
 				"<div id='in_reply_to_indicator'>"+in_reply_to_status+"<button id='in_reply_to_delete'>解除</button></div>"
@@ -86,16 +86,16 @@ jQuery(function(){
 	/*
 	//Unofficial RT
 	jQuery(".UnofficialRT").live("click",function(){
-		var screenname = jQuery(this).find(".acountname").text();
-		var text =jQuery(this).find(".acounttext").text();
+		var screenname = jQuery(this).find(".accountname").text();
+		var text =jQuery(this).find(".accounttext").text();
 		jQuery("#post_status").text(" RT @"+screenname+": "+text);
 		jQuery("#post_status").focus();
 	});
 	*/
 	//QT
 	jQuery(".QT").live("click",function(){
-		var screenname = jQuery(this).parents(".tweet").find(".acountname").text();
-		var text = jQuery(this).parents(".tweet").find(".acounttext").text();
+		var screenname = jQuery(this).parents(".tweet").find(".accountname").text();
+		var text = jQuery(this).parents(".tweet").find(".accounttext").text();
 		jQuery("#post_status").text(" QT @"+screenname+": "+text);
 		jQuery("#post_status").focus();
 		in_reply_to_id = jQuery(this).parents(".tweet").attr("id");
@@ -120,7 +120,7 @@ jQuery(function(){
 	*/
 	//icon clicked
 	jQuery(".icon").live("click" ,function(){
-		var screenname = jQuery(this).parent().find(".acountname").text();
+		var screenname = jQuery(this).parent().find(".accountname").text();
 		api_handler.urlopen("https://twitter.com/"+screenname);
 	});
 	//anchor clicked

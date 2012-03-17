@@ -20,8 +20,8 @@ class TwitterAPIHandler(object):
         self.userstreaming = TwitLib2.UserStreamCore(cons_key ,cons_secret ,acs_token ,acs_secret ,callback_userstreaming)
         self.userstreaming.start()
         self.user_info = self.api.get_verify()
-        self.url_anchor_re = re.compile(r"(https?://[^ ]+)( |$)")
-        self.name_anchor_re = re.compile(r"@(\w+)")
+        self.url_anchor_re = re.compile(r"(https?://[A-Za-z0-9\'~+\-=_.,/%\?!;:@#\*&\(\)]+)")
+        self.name_anchor_re = re.compile(r"(^|\W)@(\w+)")
         
                 
     def update(self ,status ,in_reply_to_id = None):
@@ -65,8 +65,8 @@ class TwitterAPIHandler(object):
         webbrowser.open(url)
         
     def wrap_anchor(self ,text):
-        url_wraped = self.url_anchor_re.sub(r"<a href='\1' onclick='return false'>\1</a>\2" ,text)
-        name_wraped = self.name_anchor_re.sub(r"<a href='https://twitter.com/\1' onclick='return false'>@\1</a>" ,url_wraped)
+        url_wraped = self.url_anchor_re.sub(r"<a href='\1' onclick='return false'>\1</a>" ,text)
+        name_wraped = self.name_anchor_re.sub(r"<a href='https://twitter.com/\2' onclick='return false'>\1@\2</a>" ,url_wraped)
         return name_wraped
     
     def make_tweet_tag(self ,tweet):
@@ -74,13 +74,13 @@ class TwitterAPIHandler(object):
         <div class="tweet %s %s %s" id="%s">
             <img src="%s" class="icon" />
             <div class="tweet_value">
-                %s(<a href="https://twitter.com/%s" onclick='return false'>@<span class="acountname">%s</span></a>)
+                %s(<a href="https://twitter.com/%s" onclick='return false'>@<span class="accountname">%s</span></a>)
                 <div class="doicon">
                     <input type="image" src="icon/reply.png" class="reply">
                     <input type="image" src="icon/QuoteTweet.png" class="QT">
                     <input type="image" src="icon/favorite.png" class="fav">
                 </div><br />
-                <span class="acounttext">%s</span>
+                <span class="accounttext">%s</span>
             </div>
             <hr size="1" noshade/>
         </div>
