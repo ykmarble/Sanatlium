@@ -8,7 +8,7 @@
 		<script type="text/python">
 			import SanatliumCore
 			api_handler = SanatliumCore.TwitterAPIHandler()
-			tab_handler = SanatliumCore.TabHandler(lambda tweet:alert("drow"))		
+			tab_handler = SanatliumCore.TabHandler(lambda id ,tweet:jQuery("#"+id).prepend(api_handler.make_tweet_tag(tweet)))
 		</script>
 		<script type="text/javascript" src="core.js"></script>
 	</head>
@@ -16,7 +16,8 @@
 	<body>
 		<div id="post_form">
 			<textarea id="post_status" rows="4"></textarea><br />
-			<b id="textcount">140</b><button id="after_post">delay post</button><button id="post_button">POST</button>
+			<button id="post_button">POST[<span id="textcount">0</span>]</button>
+			<button id="after_post">delay POST</button>
 		</div>
 		<ul class="tab">
 			<li><a href="#timeline" class="selected">TimeLine</a></li>

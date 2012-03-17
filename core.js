@@ -1,6 +1,11 @@
+//global variable
+var in_reply_to_id = ""
+
 jQuery(function(){
 	//set tab_handler
-	tab_handler.make_tab("timeline" ,function(tweet){return true});
+	tab_handler.make_tab("timeline" ,function(tweet){
+		return true
+	});
 	tab_handler.make_tab("replytab" ,function(tweet){
 		return tweet.text.indexOf(api_handler.user_info.screen_name) != -1
 	});
@@ -10,17 +15,11 @@ jQuery(function(){
 	tab_handler.make_tab("marbletab" ,function(tweet){
 		return tweet.text.indexOf("まーぶる") != -1
 	});
-	tab_handler.draw_handler = function(id ,tweet){
-		jQuery("#"+id).prepend(api_handler.make_tweet_tag(tweet));
-	};
 	
-	//global variable
-	var in_reply_to = ["" ,""];//0:in_reply_to_id 1:status
-	
-	//load last 200 Home TimeLine and reply
-	//api_handler.get_user_tl("yk_marble" ,200);
-	//api_handler.get_mention(200);
-	//api_handler.get_tl(200);
+	//load last Home TimeLine and reply
+	api_handler.get_user_tl("yk_marble" ,20);
+	api_handler.get_mention(20);
+	api_handler.get_tl(20);
 	
 	//set timeline div size
 	var postformheight = jQuery("#post_form").innerHeight();	
@@ -33,7 +32,7 @@ jQuery(function(){
 		jQuery("#post_count").text(tab_handler.container.__len__());
 	} ,500);
 	/*
-	//reflesh html
+	//limit the number of statuses in html
 	setInterval(function(){
 		var postCount= jQuery(".tweet").length;
 		if(postCount >500){
@@ -43,104 +42,90 @@ jQuery(function(){
 		}
 	},500);
 	*/
-	
-	
+		
+		
 	//set UI Event Handler
 	//POST button
 	jQuery("#post_button").click(function(){
-		if (in_reply_to[0] != ""){
-			api_handler.update(jQuery("#post_status").val() ,in_reply_to[0]);
-			in_reply_to = ["" ,""];
-			jQuery("#in_reply_to_indicator").remove();
-		}else{
-			api_handler.update(jQuery("#post_status").val());
+		var status = jQuery("#post_status").val();
+		if (status != ""){
+			if (in_reply_to_id != ""){
+				api_handler.update(status ,in_reply_to_id);
+				in_reply_to_id = "";
+				jQuery("#in_reply_to_indicator").remove();
+			}else{
+				api_handler.update(status);
+			}
+			jQuery("#post_status").val("");
 		}
-		jQuery("#post_status").val("");
 	});
 	//reply
 	jQuery(".reply").live("click",function(){
-		var getAcount = jQuery(this).parents(".tweet").find(".acountname").text();
-		jQuery("#post_status").text(getAcount+" ");
+		var screenname = jQuery(this).parents(".tweet").find(".acountname").text();
+		jQuery("#post_status").text("@"+screenname+" ");
 		jQuery("#post_status").focus();
-		in_reply_to[0] = jQuery(this).parents(".tweet").attr("id");
-		in_reply_to[1] = "in reply to..."+getAcount+":"+jQuery(this).parents(".tweet").find(".acounttext").text();
+		in_reply_to_id = jQuery(this).parents(".tweet").attr("id");
+		var in_reply_to_status = "in reply to...@"+screenname+":"+jQuery(this).parents(".tweet").find(".acounttext").text();
 		if (jQuery("#in_reply_to_indicator").size() == 0){
-			jQuery("#post_form").prepend("\
-				<div id='in_reply_to_indicator'>"+in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button></div>\
-				");
+			jQuery("#post_form").prepend( 
+				"<div id='in_reply_to_indicator'>"+in_reply_to_status+"<button id='in_reply_to_delete'>解除</button></div>"
+			);
 		}else{
-			jQuery("#in_reply_to_indicator").html(in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button>");
+			jQuery("#in_reply_to_indicator").html(in_reply_to_status+"<button id='in_reply_to_delete'>解除</button>");
 		}
-		var getAcount ="";
 	});
 	/*
 	//Unofficial RT
-	jQuery(".tweet").live("click",function(){
-		var getAcount = jQuery(this).find(".acountname").text();
-		var getText =jQuery(this).find(".acounttext").text();
-		jQuery("#post_status").text(" RT "+getAcount+": "+getText);
+	jQuery(".UnofficialRT").live("click",function(){
+		var screenname = jQuery(this).find(".acountname").text();
+		var text =jQuery(this).find(".acounttext").text();
+		jQuery("#post_status").text(" RT @"+screenname+": "+text);
 		jQuery("#post_status").focus();
-		var getAcount ="";
 	});
 	*/
 	//QT
 	jQuery(".QT").live("click",function(){
-		var getAcount = jQuery(this).parents(".tweet").find(".acountname").text();
-		var getText = jQuery(this).parents(".tweet").find(".acounttext").text();
-		jQuery("#post_status").text(" QT "+getAcount+": "+getText);
+		var screenname = jQuery(this).parents(".tweet").find(".acountname").text();
+		var text = jQuery(this).parents(".tweet").find(".acounttext").text();
+		jQuery("#post_status").text(" QT @"+screenname+": "+text);
 		jQuery("#post_status").focus();
-		in_reply_to[0] = jQuery(this).parents(".tweet").attr("id");
-		in_reply_to[1] = "in reply to..."+getAcount+":"+getText;
+		in_reply_to_id = jQuery(this).parents(".tweet").attr("id");
+		var in_reply_to_status = "in reply to...@"+screenname+":"+text;
 		if (jQuery("#in_reply_to_indicator").size() == 0){
-			jQuery("#post_form").prepend("\
-				<div id='in_reply_to_indicator'>"+in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button></div>\
-				");
+			jQuery("#post_form").prepend(
+				"<div id='in_reply_to_indicator'>"+in_reply_to_status+"<button id='in_reply_to_delete'>解除</button></div>"
+			);
 		}else{
-			jQuery("#in_reply_to_indicator").html(in_reply_to[1]+"<button id='in_reply_to_delete'>解除</button>");
+			jQuery("#in_reply_to_indicator").html(in_reply_to_status+"<button id='in_reply_to_delete'>解除</button>");
 		}
-		var getAcount ="";
 	});
 	//create favorite
 	jQuery(".fav").live("click",function(){
 		api_handler.create_favorite(jQuery(this).parents(".tweet").attr("id"));
-		alert("favarited");
 	});
 	/*
 	//create RT
-	jQuery(".tweet").live("click",function(){
+	jQuery(".OfficialRT").live("click",function(){
 		api_handler.create_retweet(jQuery(this).attr("id"));
-		alert("RTed");
 	});
 	*/
 	//icon clicked
 	jQuery(".icon").live("click" ,function(){
-		var memo = jQuery(this).parent().find(".acountname").text();
-		api_handler.urlopen("https://twitter.com/"+memo.slice(1));
+		var screenname = jQuery(this).parent().find(".acountname").text();
+		api_handler.urlopen("https://twitter.com/"+screenname);
 	});
 	//anchor clicked
-	jQuery("a").live("click" ,function(){
+	jQuery(":not(.tab li) a").live("click" ,function(){
 		api_handler.urlopen(jQuery(this).attr("href"));
 	});
 	//delete in_reply_to
 	jQuery("#in_reply_to_delete").live("click" ,function(){
-		in_reply_to = ["" ,""];
+		in_reply_to = "";
 		jQuery("#in_reply_to_indicator").remove();
 	});
-	
-	
-	/*
-	//reply bom
-	jQuery(".reply_bom").live("click",function(){
-	var getAcount = jQuery(this).parents(".tweet").find(".acountname").text();
-	for(var z = 1; z < 10;z++){
-		getAcount = getAcount+".";
-		api_handler.update(jQuery(getAcount).val());
-		}
-	getAcount = "";
-	});
-	*/
+
 				
-	//make tab script
+	//change tab
 	jQuery(".tab li a").click(function(){
 		jQuery(".tab li a").removeClass("selected");
 		jQuery(this).addClass("selected");
@@ -164,24 +149,19 @@ jQuery(function(){
 	jQuery(".tweet input").live("mouseout",function(){
 		jQuery(".tooltip").css("display","none");
 	});
-	jQuery(".tweet input").live("mousemove" ,function(e){
-		var tipID = "#"+jQuery(this).attr("class")+"_tip";
-		jQuery(tipID).css({"top":e.pageY-20+"px","left":e.pageX-20+"px"});
-	});
-	
+
 	//display string length of post_form
 	jQuery("#post_status").bind("change keyup",function(){
-		var WriLeng = jQuery(this).val().length;
-		var Leng = 140 - WriLeng;
-		jQuery("#textcount").text(Leng);
-		if(Leng < 0){
+		var length = jQuery(this).val().length;
+		jQuery("#textcount").text(length);
+		if(length > 140){
 			jQuery("#textcount").css("color","red");
 		}else{
 			jQuery("#textcount").css("color","#000");
 		}
 	});
 	
-	//set Window Resize Event Handler
+	//set Window Resized Event Handler
 	jQuery(window).resize(function(){
 		windowheight = jQuery(window).height();
 		jQuery(".maintab").height(windowheight-postformheight-60);
@@ -190,8 +170,7 @@ jQuery(function(){
 	//set Key Config
 	jQuery("#post_form").gpKey("down" ,{
 		"^enter":function(){
-			jQuery("#post_button").click();
-			
+			jQuery("#post_button").click();			
 		},
 	});
 	
@@ -199,7 +178,15 @@ jQuery(function(){
 	jQuery("#after_post").live("click" ,function(){
 		jQuery("#backgray").fadeIn(1000);
 		jQuery("#outimage").fadeIn(900);
-		jQuery("#outimage").fadeIn(500).html("<div id='after_top'>予約投稿</div><div id='after_bottom'><span style='font-size:200%;'>何を投稿する？</span><br /><textarea id='after_area'></textarea><br /><input type='text' id='gethour' value='0' />時間<input type='text' id='getminute' value='0' />分<input type='text' id='getsecond' value='0' />秒後に送信する<br /><input type='button' id='gopost' value='予約投稿' /></div>");
+		jQuery("#outimage").fadeIn(500).html(" \
+			<div id='after_top'>予約投稿</div> \
+			<div id='after_bottom'> \
+				<span style='font-size:200%;'>何を投稿する？</span><br /> \
+				<textarea id='after_area'></textarea><br /> \
+				<input type='text' id='gethour' value='0' />時間<input type='text' id='getminute' value='0' />分<input type='text' id='getsecond' value='0' />秒後に送信する<br /> \
+				<input type='button' id='gopost' value='予約投稿' /> \
+			</div> \
+		");
 	});
 	jQuery("#after_top").live("click" ,function(){
 		jQuery("#outimage").fadeOut(1000);

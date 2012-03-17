@@ -74,7 +74,7 @@ class TwitterAPIHandler(object):
         <div class="tweet %s %s %s" id="%s">
             <img src="%s" class="icon" />
             <div class="tweet_value">
-                %s(<a href="https://twitter.com/%s" class="acountname" onclick='return false'>@%s</a>)
+                %s(<a href="https://twitter.com/%s" onclick='return false'>@<span class="acountname">%s</span></a>)
                 <div class="doicon">
                     <input type="image" src="icon/reply.png" class="reply">
                     <input type="image" src="icon/QuoteTweet.png" class="QT">
