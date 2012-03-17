@@ -66,6 +66,8 @@ jQuery(function(){
 				api_handler.update(status);
 			}
 			jQuery("#post_status").val("");
+			jQuery("#post_status").keyup();
+			jQuery("#post_status").blur();
 		}
 	});
 	//reply
@@ -181,12 +183,21 @@ jQuery(function(){
 	});
 	
 	//set Key Config
-	jQuery("#post_form").gpKey("down" ,{
+	jQuery("body").gpKey("down" ,{
+		"enter":function(){
+			if (jQuery("#post_status:focus").length == 0){
+				jQuery("#post_status").focus();
+			}else{
+				jQuery("#post_status").val(jQuery("#post_status").val()+"\n");
+			};			
+		},
 		"^enter":function(){
 			jQuery("#post_button").click();			
 		},
+		"escape":function(){
+			jQuery("#post_status").blur();
+		}
 	});
-	
 	//delay post
 	jQuery("#after_post").live("click" ,function(){
 		jQuery("#backgray").fadeIn(1000);
@@ -195,7 +206,7 @@ jQuery(function(){
 			<div id='after_top'>予約投稿</div> \
 			<div id='after_bottom'> \
 				<span style='font-size:200%;'>何を投稿する？</span><br /> \
-				<textarea id='after_area'></textarea><br /> \
+				<textarea id='after_area'>"+jQuery("#post_status").val()+"</textarea><br /> \
 				<input type='text' id='gethour' value='0' />時間<input type='text' id='getminute' value='0' />分<input type='text' id='getsecond' value='0' />秒後に送信する<br /> \
 				<input type='button' id='gopost' value='予約投稿' /> \
 			</div> \
@@ -219,7 +230,10 @@ jQuery(function(){
 		setTimeout(function(s){
 			api_handler.update(text);
 		}　,getT ,text);
+		jQuery("#post_status").val("");
+		jQuery("#post_status").keyup();
+		jQuery("#post_status").blur();
 		jQuery("#outimage").fadeOut(1000);
-		jQuery("#backgray").fadeOut(1000);	
+		jQuery("#backgray").fadeOut(1000);
 	});
 });
