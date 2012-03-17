@@ -20,7 +20,7 @@ button{
 	border-radius:2px;
 	
 }
-button:hover{
+button:hover ,#auto_scroll.enable{
 	border:solid 1px #c0c0c0;
 	background:-webkit-gradient(
 		linear,

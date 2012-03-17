@@ -28,8 +28,17 @@ jQuery(function(){
 	
 	// set UserStreamings Event Lisetener
 	setInterval(function(){
-		tab_handler.update(api_handler.check_que());
-		jQuery("#post_count").text(tab_handler.container.__len__());
+		if (!api_handler.userstreaming.que.empty()){
+			var view_id = jQuery(".tab .selected").attr("href");
+			var scr_pos = jQuery(view_id).scrollTop();
+			var old_height = jQuery(view_id).get(0).scrollHeight;
+			tab_handler.update(api_handler.check_que());
+			var new_height = jQuery(view_id).get(0).scrollHeight;
+			if (scr_pos!=0 & !jQuery("#auto_scroll").hasClass("enable")){
+				jQuery(view_id).scrollTop(scr_pos + new_height - old_height);
+			};
+			jQuery("#post_count").text(tab_handler.container.__len__());
+		};
 	} ,500);
 	/*
 	//limit the number of statuses in html
@@ -122,6 +131,10 @@ jQuery(function(){
 	jQuery("#in_reply_to_delete").live("click" ,function(){
 		in_reply_to = "";
 		jQuery("#in_reply_to_indicator").remove();
+	});
+	//auto scroll toggle button
+	jQuery("#auto_scroll").live("click" ,function(){
+		jQuery(this).toggleClass("enable");
 	});
 
 				

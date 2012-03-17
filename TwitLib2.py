@@ -96,7 +96,6 @@ class TwitterAPICore(object):
            args["since_id"] = since_id
         if max_id:
            args["max_id"] = max_id
-        print "hometl:" ,args
         connect = self._http_get("%s%s"%(self.base_url ,path) ,args)
         try:
             responce = connect.read().decode("utf-8")
@@ -129,7 +128,6 @@ class TwitterAPICore(object):
            args["max_id"] = max_id
         if include_rts:
            args["include_rts"] = include_rts
-        print "usertl:" ,args
         connect = self._http_get("%s%s"%(self.base_url ,path) ,args)
         try:
             responce = connect.read().decode("utf-8")
@@ -150,7 +148,6 @@ class TwitterAPICore(object):
            args["since_id"] = since_id
         if max_id:
            args["max_id"] = max_id
-        print "mantion:" ,args
         connect = self._http_get("%s%s"%(self.base_url ,path) ,args)
         try:
             responce = connect.read().decode("utf-8")
