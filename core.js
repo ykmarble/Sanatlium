@@ -17,9 +17,9 @@ jQuery(function(){
 	});
 	
 	//load last Home TimeLine and reply
-	api_handler.get_user_tl("yk_marble" ,20);
-	api_handler.get_mention(20);
-	api_handler.get_tl(20);
+	api_handler.get_user_tl("yk_marble" ,200);
+	api_handler.get_mention(200);
+	api_handler.get_tl(200);
 	
 	//set timeline div size
 	var postformheight = jQuery("#post_form").innerHeight();	
@@ -29,7 +29,7 @@ jQuery(function(){
 	// set UserStreamings Event Lisetener
 	setInterval(function(){
 		if (!api_handler.userstreaming.que.empty()){
-			var view_id = jQuery(".tab .selected").attr("href");
+			var view_id = jQuery(".tab .current_tab").attr("href");
 			var scr_pos = jQuery(view_id).scrollTop();
 			var old_height = jQuery(view_id).get(0).scrollHeight;
 			tab_handler.update(api_handler.check_que());
@@ -142,8 +142,8 @@ jQuery(function(){
 				
 	//change tab
 	jQuery(".tab li a").click(function(){
-		jQuery(".tab li a").removeClass("selected");
-		jQuery(this).addClass("selected");
+		jQuery(".tab li a").removeClass("current_tab");
+		jQuery(this).addClass("current_tab");
 		jQuery(".maintab").hide();
 		jQuery(jQuery(this).attr("href")).fadeIn(0);
 		return false;
@@ -183,20 +183,40 @@ jQuery(function(){
 	});
 	
 	//set Key Config
-	jQuery("body").gpKey("down" ,{
-		"enter":function(){
-			if (jQuery("#post_status:focus").length == 0){
-				jQuery("#post_status").focus();
-			}else{
-				jQuery("#post_status").val(jQuery("#post_status").val()+"\n");
-			};			
-		},
-		"^enter":function(){
-			jQuery("#post_button").click();			
-		},
-		"escape":function(){
-			jQuery("#post_status").blur();
+	jQuery("body").keydown(function(e){
+		var keyCode = e.which;
+		
+		//convertKeyCode to Ascii
+		if ((48 <= keyCode && keyCode <= 48 + 10) 
+		 || (65 <= keyCode && keyCode <= 65 + 25)){
+			var keyChar = String.fromCharCode(keyCode);
+		}else if (keyCode == 13){
+			var keyChar = "ENTER";
+		}else if (keyCode == 27){
+			var keyChar = "ESCAPE";
+		}else{
+			var keyChar = "ANOTHER";
 		}
+		
+		if (keyChar == "ENTER"){
+			if (jQuery("#post_status:focus").length == 0 && jQuery("#after_area").size() == 0){
+				jQuery("#post_status").focus();
+				return false
+			};
+		};
+		 if (e.ctrlKey && keyChar == "ENTER"){
+		 	if (jQuery("#post_status:focus").length != 0){
+		 		jQuery("#post_button").click();
+		 	}else if (jQuery("#after_area:focus").length != 0){
+		 		jQuery("#gopost").click();
+		 	};
+		};
+		 if (keyChar == "ESCAPE"){
+			if (jQuery("#post_status:focus").length != 0){
+				jQuery("#post_status").blur();
+				return false
+			}
+		};
 	});
 	//delay post
 	jQuery("#after_post").live("click" ,function(){
@@ -211,6 +231,7 @@ jQuery(function(){
 				<input type='button' id='gopost' value='予約投稿' /> \
 			</div> \
 		");
+		jQuery("#after_area").focus();
 	});
 	jQuery("#after_top").live("click" ,function(){
 		jQuery("#outimage").fadeOut(1000);

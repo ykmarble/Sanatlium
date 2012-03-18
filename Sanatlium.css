@@ -52,7 +52,7 @@ button#after_post{float: right;}
 		color-stop(1, rgb(220,220,220))
 	);
 }
-.tab .selected{
+.tab .current_tab{
 	background:-webkit-gradient(
 		linear,
 		left bottom,
