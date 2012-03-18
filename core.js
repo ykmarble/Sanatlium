@@ -34,7 +34,7 @@ jQuery(function(){
 			var old_height = jQuery(view_id).get(0).scrollHeight;
 			tab_handler.update(api_handler.check_que());
 			var new_height = jQuery(view_id).get(0).scrollHeight;
-			if (scr_pos!=0 & !jQuery("#auto_scroll").hasClass("enable")){
+			if (scr_pos!=0 && !jQuery("#auto_scroll").hasClass("enable")){
 				jQuery(view_id).scrollTop(scr_pos + new_height - old_height);
 			};
 			jQuery("#post_count").text(tab_handler.container.__len__());
@@ -84,6 +84,7 @@ jQuery(function(){
 		}else{
 			jQuery("#in_reply_to_indicator").html(in_reply_to_status+"<button id='in_reply_to_delete'>解除</button>");
 		}
+		return false
 	});
 	/*
 	//Unofficial RT
@@ -109,25 +110,38 @@ jQuery(function(){
 		}else{
 			jQuery("#in_reply_to_indicator").html(in_reply_to_status+"<button id='in_reply_to_delete'>解除</button>");
 		}
+		return false
 	});
 	//create favorite
 	jQuery(".fav").live("click",function(){
 		api_handler.create_favorite(jQuery(this).parents(".tweet").attr("id"));
+		jQuery(this).parents(".doicon").prepend("<span class='faved'>★</span>");
+		return false
 	});
-	/*
 	//create RT
-	jQuery(".OfficialRT").live("click",function(){
+	jQuery(".RT").live("click",function(){
 		api_handler.create_retweet(jQuery(this).attr("id"));
+		return false
 	});
-	*/
+	//tweet cliked
+	jQuery(".tweet").live("click" ,function(){
+		if (jQuery(this).hasClass("selected_status")){
+			jQuery(".tweet").removeClass("selected_status");
+		}else{
+			jQuery(".tweet").removeClass("selected_status");
+			jQuery(this).addClass("selected_status");
+		};
+	});
 	//icon clicked
 	jQuery(".icon").live("click" ,function(){
 		var screenname = jQuery(this).parent().find(".accountname").text();
 		api_handler.urlopen("https://twitter.com/"+screenname);
+		return false
 	});
 	//anchor clicked
 	jQuery(":not(.tab li) a").live("click" ,function(){
 		api_handler.urlopen(jQuery(this).attr("href"));
+		return false
 	});
 	//delete in_reply_to
 	jQuery("#in_reply_to_delete").live("click" ,function(){
@@ -179,7 +193,7 @@ jQuery(function(){
 	//set Window Resized Event Handler
 	jQuery(window).resize(function(){
 		windowheight = jQuery(window).height();
-		jQuery(".maintab").height(windowheight-postformheight-60);
+		jQuery(".maintab").height(windowheight-postformheight-57);
 	});
 	
 	//set Key Config
@@ -197,25 +211,72 @@ jQuery(function(){
 		}else{
 			var keyChar = "ANOTHER";
 		}
-		
-		if (keyChar == "ENTER"){
-			if (jQuery("#post_status:focus").length == 0 && jQuery("#after_area").size() == 0){
-				jQuery("#post_status").focus();
-				return false
-			};
-		};
-		 if (e.ctrlKey && keyChar == "ENTER"){
+		if (e.ctrlKey && keyChar == "ENTER"){
 		 	if (jQuery("#post_status:focus").length != 0){
 		 		jQuery("#post_button").click();
 		 	}else if (jQuery("#after_area:focus").length != 0){
 		 		jQuery("#gopost").click();
 		 	};
+		}else if (keyChar == "ENTER"){
+			if (jQuery("#post_status:focus").length == 0 && jQuery("#after_area").size() == 0){
+				jQuery("#post_status").focus();
+				return false
+			};
 		};
-		 if (keyChar == "ESCAPE"){
+		if (keyChar == "ESCAPE"){
 			if (jQuery("#post_status:focus").length != 0){
 				jQuery("#post_status").blur();
 				return false
-			}
+			}else{
+				jQuery(".tweet").removeClass("selected_status");
+			};
+		};
+		if (jQuery("#post_status:focus").length == 0 && jQuery("#after_area:focus").length == 0){
+			var cur_tab = jQuery(".tab .current_tab").attr("href");
+			if (keyChar == "J"){
+				if (jQuery(cur_tab).children().hasClass("selected_status")){
+					var status_id = jQuery(".selected_status").next().attr("id");
+					if (status_id != null){
+						jQuery(cur_tab).children().removeClass("selected_status");
+						jQuery("#"+status_id).addClass("selected_status");
+					};
+				}else{
+					jQuery(cur_tab).children().slice(0 ,1).addClass("selected_status");
+				};
+				//scroll control
+				if (jQuery(".selected_status").offset().top < jQuery(cur_tab).offset().top){
+					jQuery(cur_tab).scrollTop(jQuery(".selected_status").offset().top - jQuery(cur_tab).children().offset().top)
+				}else if (jQuery(".selected_status").offset().top + jQuery(".selected_status").height() > jQuery(window).height()){
+					jQuery(cur_tab).scrollTop(jQuery(".selected_status").offset().top - jQuery(cur_tab).children().offset().top + jQuery(".selected_status").height()-jQuery(cur_tab).height()+22);
+				};
+			};
+			if (keyChar == "K"){
+				var status_id = jQuery(".selected_status").prev().attr("id");
+				jQuery(cur_tab).children().removeClass("selected_status");
+				if (status_id != null){
+					jQuery("#"+status_id).addClass("selected_status");
+					//scroll control
+					if (jQuery(".selected_status").offset().top < jQuery(cur_tab).offset().top){
+						jQuery(cur_tab).scrollTop(jQuery(".selected_status").offset().top - jQuery(cur_tab).children().offset().top)
+					}else if (jQuery(".selected_status").offset().top + jQuery(".selected_status").height() > jQuery(window).height()){
+						jQuery(cur_tab).scrollTop(jQuery(".selected_status").offset().top - jQuery(cur_tab).children().offset().top + jQuery(".selected_status").height()-jQuery(cur_tab).height()+22);
+					};
+				};
+			};
+			if (e.ctrlKey && keyChar == "R"){
+				
+			}else if (keyChar == "R"){
+				jQuery(".selected_status").children(".tweet_value").children(".doicon").children(".reply").click();
+				return false
+			};
+			if (keyChar == "F"){
+				jQuery(".selected_status").children(".tweet_value").children(".doicon").children(".fav").click();
+				return false
+			};
+			if (e.ctrlKey &&keyChar == "Q"){
+				jQuery(".selected_status").children(".tweet_value").children(".doicon").children(".QT").click();
+				return false
+			};
 		};
 	});
 	//delay post

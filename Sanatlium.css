@@ -10,7 +10,10 @@ textarea{
 	width: 100%;
 }
 a{text-decoration: none;}
-hr{clear: both;}
+hr{
+	clear: both;
+	margin-bottom:-0.5px;
+}
 button{
 	font-family: "メイリオ";
 	font-size: 100%;
@@ -80,13 +83,25 @@ button#after_post{float: right;}
 .tweet_value{overflow: hidden;}
 .tweet img{
 	height: 50px; width: 50px;
-	float: left
+	float: left;
+	padding: 1px;
 }
 .tweet input{width:25px;height:25px;}
 .doicon{float:right;text-align:right;}
 .mypost{background:rgb(184,212,255)}
 .mention{background:rgb(255,222,166)}
 .retweeted{background:rgb(183,255,168)}
+.faved{font-size:x-large ;color: rgb(255,165,0);}
+.selected_status{
+	border:solid 1px #c0c0c0;
+	background:-webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(214,243,255)),
+		color-stop(1, rgb(232,246,252))
+	);
+}
 
 /*tooltip*/
 .tooltip{
