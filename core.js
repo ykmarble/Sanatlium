@@ -134,8 +134,14 @@ jQuery(function(){
 	});
 	//create favorite
 	jQuery(".fav").live("click",function(){
-		api_handler.create_favorite(jQuery(this).parents(".tweet").attr("id"));
-		jQuery(this).parents(".doicon").prepend("<span class='faved'>★</span>");
+		var id = jQuery(this).parents(".tweet").attr("id");
+		if (jQuery(this).parents(".doicon").children("span").hasClass("faved")){
+			api_handler.destroy_favorite(id);
+			jQuery(this).parents(".doicon").children(".faved").remove();
+		}else{
+			api_handler.create_favorite(id);
+			jQuery(this).parents(".doicon").prepend("<span class='faved'>★</span>");
+		};
 		return false
 	});
 	//create RT

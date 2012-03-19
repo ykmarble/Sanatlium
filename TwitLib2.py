@@ -56,13 +56,13 @@ class TwitterAPICore(object):
         self._http_post("%s%s"%(self.base_url ,path))
         return
     
-    def create_retweet(self ,tweet):
-        path = "statuses/retweet/%s.json"%s
+    def create_retweet(self ,id):
+        path = "statuses/retweet/%s.json"%id
         self._http_post("%s%s"%(self.base_url ,path))
         return
 
-    def destroy_favorite(self ,tweet):
-        path = "favorites/destroy/%s.json"%tweet.id
+    def destroy_favorite(self ,id):
+        path = "favorites/destroy/%s.json"%id
         self._http_post("%s%s"%(self.base_url ,path))
         return
 

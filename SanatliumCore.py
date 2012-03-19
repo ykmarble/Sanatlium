@@ -47,6 +47,12 @@ class TwitterAPIHandler(object):
             thread.start_new_thread(self.api.create_retweet ,(tweet_id,))
         except:
             print "error in create_retweet"
+            
+    def destroy_favorite(self ,tweet_id):
+        try:
+            thread.start_new_thread(self.api.destroy_favorite ,(tweet_id,))
+        except:
+            print "error in destroy_favorite"
         
     def check_que(self):
         tl = []
