@@ -2,7 +2,7 @@
 
 ～概要～
 TitaniumでTwitterクライアント制作。
-動作にはoauth2 ,httplib2 ,simplejson ,tweepy ,jQuery1.4.1 ,gpKey辺りが必要です。後Titanium環境も。
+動作にはoauth2 ,httplib2 ,simplejson ,tweepy ,jQuery1.4.1辺りが必要です。後Titanium環境も。
 わざわざ使うなんて人はいないから公開の必要は無いでしょうが、このコードを見た誰かが「ちょｗｗｗこのコード受けるｗｗｗｗ」ってなって、
 まーぶるに様々なプログラミング技術を教えてくれる人が現れることを多大に期待しています。
 

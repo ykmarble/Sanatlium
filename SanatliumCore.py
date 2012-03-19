@@ -5,14 +5,7 @@ import webbrowser
 import re
 
 class TwitterAPIHandler(object):
-    def __init__(self):
-        import ConfigParser
-        parser = ConfigParser.SafeConfigParser()
-        parser.read("C:\sanatliumconfig.ini")
-        cons_key = parser.get("consumer", "key")
-        cons_secret = parser.get("consumer", "secret")
-        acs_token = parser.get("token", "key")
-        acs_secret = parser.get("token", "secret")
+    def __init__(self ,cons_key ,cons_secret ,acs_token ,acs_secret):
         self.api = TwitLib2.TwitterAPICore(cons_key ,cons_secret ,acs_token ,acs_secret)
         def callback_userstreaming(self ,event):
             if isinstance(event ,TwitLib2.Tweet):

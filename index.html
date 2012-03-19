@@ -6,8 +6,23 @@
 		<script type="text/javascript" src="jquery-1.4.1.min.js"></script>
 		<script type="text/python">
 			import SanatliumCore
-			api_handler = SanatliumCore.TwitterAPIHandler()
-			tab_handler = SanatliumCore.TabHandler(lambda id ,tweet:jQuery("#"+id).prepend(api_handler.make_tweet_tag(tweet)))
+			import ConfigParser
+			parser = ConfigParser.SafeConfigParser()
+			try:
+				open("config.ini").close()
+				parser.read("config.ini")
+			except IOError:
+				open("config.ini" ,"w").close()
+				parser.read("config.ini")
+				if not (parser.has_option("consumer", "key") and parser.has_option("consumer", "secret")
+			   	   and parser.has_option("token", "key") and parser.has_option("token", "key")):
+					parser.add_section("token")
+					parser.add_section("consumer")
+					parser.set("token", "key", "")
+					parser.set("token", "secret", "")
+					parser.set("consumer", "key", "")
+					parser.set("consumer", "secret", "")
+					parser.write(open("config.ini" ,"w"))
 		</script>
 		<script type="text/javascript" src="core.js"></script>
 	</head>
@@ -49,9 +64,13 @@
 		<div id="QT_tip" class="tooltip">QT</div>
 		<div id="fav_tip" class="tooltip">favorite</div>
 		
-		<!--for delay post-->
+		<!--delay post-->
 		<div id='backgray'></div>
-		<div id='outimage'>
+		<div id='outimage'></div>
+		
+		<!--set up-->
+		<div id="setup">
+			Set up config file and restart Sanatlilum!!
 		</div>
 	</body>
 </html>

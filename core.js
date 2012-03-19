@@ -1,7 +1,25 @@
 //global variable
-var in_reply_to_id = ""
+var in_reply_to_id = "";
 
 jQuery(function(){
+	//get Consumer and Token
+	var cons_key = parser.get("consumer", "key");
+	var cons_secret = parser.get("consumer", "secret");
+	var acs_token = parser.get("token", "key");
+	var acs_secret = parser.get("token", "secret");
+	
+	if (cons_key == "" || cons_secret == "" || acs_token == "" || acs_secret == ""){
+		jQuery("#backgray").fadeIn(500);
+		jQuery("#setup").fadeIn(500);
+		while (True);
+	}
+	
+	//make handler
+	var api_handler = SanatliumCore.TwitterAPIHandler(cons_key ,cons_secret ,acs_token ,acs_secret);
+	var tab_handler = SanatliumCore.TabHandler(function(id ,tweet){
+		jQuery("#"+id).prepend(api_handler.make_tweet_tag(tweet))
+	});
+	
 	//set tab_handler
 	tab_handler.make_tab("timeline" ,function(tweet){
 		return true
@@ -17,14 +35,9 @@ jQuery(function(){
 	});
 	
 	//load last Home TimeLine and reply
-	api_handler.get_user_tl("yk_marble" ,200);
-	api_handler.get_mention(200);
-	api_handler.get_tl(200);
-	
-	//set timeline div size
-	var postformheight = jQuery("#post_form").innerHeight();	
-	var windowheight = jQuery(window).height();
-	jQuery(".maintab").height(windowheight-postformheight-60);
+	api_handler.get_user_tl("yk_marble" ,20);
+	api_handler.get_mention(20);
+	api_handler.get_tl(20);
 	
 	// set UserStreamings Event Lisetener
 	setInterval(function(){
@@ -40,6 +53,13 @@ jQuery(function(){
 			jQuery("#post_count").text(tab_handler.container.__len__());
 		};
 	} ,500);
+
+	
+	//set timeline div size
+	var postformheight = jQuery("#post_form").innerHeight();	
+	var windowheight = jQuery(window).height();
+	jQuery(".maintab").height(windowheight-postformheight-60);
+	
 	/*
 	//limit the number of statuses in html
 	setInterval(function(){

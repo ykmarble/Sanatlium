@@ -142,3 +142,14 @@ button#after_post{float: right;}
 #after_top{width:500px;height:30px;background:#000;color:#fff;font-size:140%;border-radius:12px 12px 0px 0px;margin:0px auto;padding-left:10px}
 #after_bottom{width:470px;height:300px;background:#b0c4de;margin:0px auto;padding-left:40px;}
 #after_area{width:80%;height:40%;border-radius:7px;}
+
+/*get consumer window*/
+#setup{
+	background:rgba(0 ,0 ,0 ,0.0);
+	color:#FFFFFF;
+	font-size:xx-large;
+	display:none;
+	position: fixed;
+	height:100%;width:100%;
+}
+
