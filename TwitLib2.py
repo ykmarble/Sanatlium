@@ -87,7 +87,7 @@ class TwitterAPICore(object):
 
     def get_home_timeline(self ,count=None ,since_id=None ,max_id=None):
         path = "statuses/home_timeline.json"
-        args = {}
+        args = {"include_entities":"true"}
         if count:
             if count > 200:
                count = 200
@@ -117,7 +117,7 @@ class TwitterAPICore(object):
 
     def get_user_timeline(self ,screen_name ,count=None ,since_id=None ,max_id=None ,include_rts=None):
         path = "statuses/user_timeline.json"
-        args = {"screen_name":screen_name}
+        args = {"screen_name":screen_name ,"include_entities":"true"}
         if count:
             if count > 200:
                count = 200
@@ -139,7 +139,7 @@ class TwitterAPICore(object):
 
     def get_mention(self ,count=None ,since_id=None ,max_id=None):
         path = "statuses/mentions.json"
-        args = {}
+        args = {"include_entities":"true"}
         if count:
             if count > 200:
                count = 200
@@ -239,6 +239,7 @@ class Tweet(object):
         self.source = status_dict["source"]
         self.in_reply_to_user_id = status_dict["in_reply_to_user_id"]
         self.in_reply_to_status_id = status_dict["in_reply_to_status_id"]
+        self.entities = Entities(status_dict["entities"])
         if status_dict["user"].__len__() >= 2:
             self.user = User(status_dict["user"])
         try:
@@ -258,6 +259,11 @@ class User(object):
         self.following = status_dict["following"]
         self.screen_name = status_dict["screen_name"]
         self.description = status_dict["description"]
+
+
+class Entities(object):
+    def __init__(self ,status_dict):
+        self.urls = [[urls["expanded_url"] ,urls["url"]] for urls in status_dict["urls"]]
 
 
 class Event(object):

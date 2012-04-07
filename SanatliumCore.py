@@ -63,8 +63,10 @@ class TwitterAPIHandler(object):
     def urlopen(self ,url):
         webbrowser.open(url)
         
-    def wrap_anchor(self ,text):
-        url_wraped = self.url_anchor_re.sub(r"<a href='\1' onclick='return false'>\1</a>" ,text)
+    def wrap_anchor(self ,tweet):
+        url_wraped = self.url_anchor_re.sub(r"<a href='\1' onclick='return false'>\1</a>" ,tweet.text)
+        for long_url ,short_url in  tweet.entities.urls:
+            url_wraped = url_wraped.replace(short_url ,long_url)
         name_wraped = self.name_anchor_re.sub(r"<a href='https://twitter.com/\2' onclick='return false'>\1@\2</a>" ,url_wraped)
         return name_wraped
     
@@ -91,7 +93,7 @@ class TwitterAPIHandler(object):
             ,tweet.user.name if not tweet.retweeted_status else tweet.retweeted_status.user.name
             ,tweet.user.screen_name if not tweet.retweeted_status else tweet.retweeted_status.user.name
             ,tweet.user.screen_name if not tweet.retweeted_status else tweet.retweeted_status.user.screen_name
-            ,self.wrap_anchor(tweet.text) if not tweet.retweeted_status else self.wrap_anchor(tweet.retweeted_status.text))
+            ,self.wrap_anchor(tweet) if not tweet.retweeted_status else self.wrap_anchor(tweet.retweeted_status.text))
 
     def make_tl_tag(self ,tl):
         return "".join(map(self.make_tweet_tag ,tl))
